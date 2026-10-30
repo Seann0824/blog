@@ -5,7 +5,7 @@ export default defineAstroPaperConfig({
     // 线上由 Cloudflare Pages 的 SITE_URL 环境变量注入，本地回落到占位域名
     url: process.env.SITE_URL || "https://blog.example.com",
     title: "Sean 的博客",
-    description: "飞书里写的文字，同步到这里。",
+    description: "肖元彪（Sean）的个人博客：前端工程师，做 AI 应用与 Agent 方向的产品工程。",
     author: "Sean",
     ogImage: "default-og.jpg",
     lang: "zh-CN",

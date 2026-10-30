@@ -23,6 +23,35 @@ const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 const homePath = getRelativeLocaleUrl(locale, "");
+
+// 首页 hero 的个人资料与履历（和紙主题里当作「履歴書」来排：左栏年份、右栏经历）
+const profile = {
+  name: "肖元彪",
+  en: "Sean",
+  role: "前端工程师 · AI 应用与 Agent 方向",
+  place: "深圳",
+};
+
+const career = [
+  {
+    period: "2026.01 — 2026.10",
+    org: "字节跳动 · TikTok Ads",
+    role: "前端工程师",
+    place: "深圳",
+  },
+  {
+    period: "2023.07 — 2025.12",
+    org: "蓝湖 · MasterGo",
+    role: "前端工程师",
+    place: "北京",
+  },
+  {
+    period: "2019 — 2023",
+    org: "内蒙古科技大学",
+    role: "软件工程 · 本科",
+    place: "包头",
+  },
+];
 ---
 
 <Layout>
@@ -38,24 +67,58 @@ const homePath = getRelativeLocaleUrl(locale, "");
         aria-hidden="true"
         class="tategaki text-accent/60 pointer-events-none absolute inset-e-1 top-14 hidden text-[0.7rem] tracking-[0.55em] sm:block"
       >
-        日々の記録
+        経歴
       </span>
 
       <p
         class="text-muted-foreground font-gothic text-[0.65rem] tracking-[0.4em] uppercase"
       >
-        washi
+        profile
       </p>
-      <h1
-        class="mt-5 text-3xl font-semibold tracking-[0.18em] sm:text-4xl"
-      >
-        {site.title}
+      <h1 class="mt-5 text-3xl font-semibold tracking-[0.18em] sm:text-4xl">
+        {profile.name}
+        <span
+          class="text-muted-foreground ms-2 text-base font-normal tracking-[0.2em]"
+        >
+          / {profile.en}
+        </span>
       </h1>
-
-      <p class="mt-7 leading-[1.95]">{site.description}</p>
-      <p class="text-foreground/70 mt-3 text-[0.95rem] leading-[1.9]">
-        关于代码、产品，和一些没什么用但想记下来的事。
+      <p
+        class="text-muted-foreground font-gothic mt-4 text-xs tracking-[0.14em]"
+      >
+        {profile.role} · {profile.place}
       </p>
+
+      <div class="mt-8 max-w-xl space-y-4 leading-[1.95]">
+        <p>
+          做过设计工具，也做过广告系统。在蓝湖 MasterGo 负责 MasterGo Agent、MCP
+          Server 与开发者工具，包括那套用 Rust 重写的本地字体服务插件——安装包
+          65MB 压到 3MB，启动从 10 秒到 1 秒；后来在字节跳动 TikTok Ads
+          做素材库与创编流程。
+        </p>
+        <p class="text-foreground/80">
+          现在想做的是 AI 应用与 Agent
+          方向的产品工程：自己用 Rust 从零写过一套 agent runtime，也还在继续写。这里主要记下这些过程里的取舍。
+        </p>
+      </div>
+
+      <dl class="border-border mt-10 border-t">
+        {
+          career.map(({ period, org, role, place }) => (
+            <div class="border-border grid grid-cols-1 gap-1 border-b py-4 sm:grid-cols-[8.5rem_1fr] sm:gap-5">
+              <dt class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.12em] sm:pt-1">
+                {period}
+              </dt>
+              <dd>
+                <p class="font-medium tracking-[0.02em]">{org}</p>
+                <p class="text-muted-foreground mt-1 text-xs tracking-[0.06em]">
+                  {role} · {place}
+                </p>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
 
       <a
         target="_blank"
@@ -64,7 +127,11 @@ const homePath = getRelativeLocaleUrl(locale, "");
         aria-label="RSS Feed"
         title="RSS Feed"
       >
-        <IconRss width={14} height={14} class="stroke-accent scale-125 stroke-2 rtl:-rotate-90" />
+        <IconRss
+          width={14}
+          height={14}
+          class="stroke-accent scale-125 stroke-2 rtl:-rotate-90"
+        />
         RSS
       </a>
 
