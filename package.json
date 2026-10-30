@@ -1,11 +1,11 @@
 {
   "name": "sean-blog",
-  "type": "commonjs",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro check && astro build && pagefind --site dist && cp -R dist/pagefind public/",
     "preview": "astro preview",
     "check": "astro check",
     "sync": "elog sync -e .elog.env",
@@ -14,15 +14,29 @@
     "postinstall": "node scripts/patch-feishux.mjs"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.4",
+    "@astrojs/mdx": "^7.0.8",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
-    "@fontsource-variable/inter": "^5.3.0",
-    "@fontsource-variable/playfair-display": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.8",
+    "dayjs": "^1.11.23",
+    "lodash.kebabcase": "^4.1.1",
+    "rehype-callouts": "^2.2.0",
+    "remark-collapse": "^0.1.2",
+    "remark-toc": "^9.0.0",
+    "sharp": "^0.35.5",
+    "slugify": "^1.6.9",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@elog/cli": "^0.14.7"
+    "@astrojs/check": "^0.9.12",
+    "@elog/cli": "^0.14.7",
+    "@pagefind/default-ui": "^1.5.2",
+    "@shikijs/transformers": "^4.5.0",
+    "@tailwindcss/typography": "^0.5.20",
+    "@types/lodash.kebabcase": "^4.1.9",
+    "pagefind": "^1.5.2",
+    "typescript": "^6.0.3"
   }
 }

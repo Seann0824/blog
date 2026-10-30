@@ -1,344 +1,39 @@
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/playfair-display';
-@import 'tailwindcss';
+@import "tailwindcss";
+@import "./theme.css";
+@import "./typography.css";
+@import "rehype-callouts/theme/obsidian";
 
-/* 主题开关是给 <html> 加 .dark 类，而不是只跟随系统，所以要重定义 dark 变体 */
-@custom-variant dark (&:where(.dark, .dark *));
-
-/*
-  设计系统沿用旧站 sean.englife.space 的 shadcn 风格 token：
-  背景/前景/muted/accent/border 五件套，深色优先，暖灰底色 + 焦糖强调色。
-  变量放在 :root 与 .dark 上，@theme inline 让工具类直接引用变量，
-  这样切换主题不需要重新生成 CSS。
-*/
-:root {
-  color-scheme: light;
-  --background: #fdfbf7;
-  --foreground: #232019;
-  --muted-foreground: #6b645a;
-  --accent: #a05f24;
-  --accent-foreground: #fdfbf7;
-  --border: #e5ded1;
-  --code-bg: #f4efe6;
-}
-
-html.dark,
-[data-theme='dark'] {
-  color-scheme: dark;
-  --background: #1c1b19;
-  --foreground: #e9e4d9;
-  --muted-foreground: #9c9487;
-  --accent: #d9a267;
-  --accent-foreground: #1c1b19;
-  --border: #322e29;
-  --code-bg: #232120;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-border: var(--border);
-
-  --font-app: 'Inter Variable', ui-sans-serif, system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --font-display: 'Playfair Display Variable', 'Songti SC', Georgia, serif;
-}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @layer base {
-  html {
-    overflow-y: scroll;
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
+  * {
+    @apply border-border outline-accent/75;
+    scrollbar-width: auto;
+    scrollbar-color: var(--color-muted) transparent;
   }
-
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-app);
-    font-feature-settings: 'kern', 'liga';
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+  a,
+  button,
+  #main-content {
+    @apply outline-accent outline-offset-1 focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
   }
-
-  ::selection {
-    background-color: color-mix(in srgb, var(--accent) 75%, transparent);
-    color: var(--accent-foreground);
-  }
-
-  :where(a, button):focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-    border-radius: 4px;
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
   }
 }
 
-@layer components {
-  /* 居中内容列：header / main / footer 共用 */
-  .app-layout {
-    width: 100%;
-    max-width: 46rem;
-    margin-inline: auto;
-    padding-inline: 1.25rem;
-  }
+@utility max-w-app {
+  @apply max-w-3xl;
+}
 
-  @media (min-width: 640px) {
-    .app-layout {
-      padding-inline: 1.75rem;
-    }
-  }
+@utility app-layout {
+  @apply max-w-app mx-auto w-full px-4;
+}
 
-  /* 首页 hero */
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 6vw, 2.9rem);
-    line-height: 1.15;
-    font-weight: 500;
-    letter-spacing: -0.015em;
-    margin-bottom: 0.6rem;
-  }
+@utility active-nav {
+  @apply underline decoration-wavy decoration-2 underline-offset-8;
+}
 
-  .hero-rss {
-    color: var(--muted-foreground);
-    transition: color 150ms ease;
-  }
-
-  .hero-rss:hover {
-    color: var(--accent);
-  }
-
-  .hero-intro {
-    color: var(--muted-foreground);
-    line-height: 1.85;
-    max-width: 40rem;
-    margin-top: 0.9rem;
-  }
-
-  .hero-meta {
-    margin-top: 1.1rem;
-    font-size: 0.8125rem;
-    letter-spacing: 0.16em;
-    color: var(--muted-foreground);
-  }
-
-  .hero-socials {
-    color: var(--muted-foreground);
-    font-size: 0.875rem;
-  }
-
-  .hero-socials a {
-    color: var(--muted-foreground);
-    transition: color 150ms ease, transform 150ms ease;
-  }
-
-  .hero-socials a:hover {
-    color: var(--accent);
-    transform: rotate(6deg);
-  }
-
-  /* 文章卡片 */
-  .post-card {
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.15rem 1.25rem 1rem;
-    background-color: color-mix(in srgb, var(--foreground) 2%, transparent);
-    transition: border-color 180ms ease, transform 180ms ease, background-color 180ms ease;
-  }
-
-  .post-card:hover {
-    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-    background-color: color-mix(in srgb, var(--accent) 5%, transparent);
-    transform: translateY(-2px);
-  }
-
-  .post-card-content h3 {
-    font-family: var(--font-display);
-    letter-spacing: 0.005em;
-    transition: text-decoration-color 150ms ease;
-  }
-
-  .post-card-content > p {
-    color: var(--muted-foreground);
-    line-height: 1.75;
-    margin-top: 0.5rem;
-    font-size: 0.9375rem;
-  }
-
-  .post-cta {
-    display: inline-block;
-    margin-top: 0.75rem;
-    font-size: 0.8125rem;
-    letter-spacing: 0.08em;
-    color: var(--muted-foreground);
-    transition: color 150ms ease, transform 150ms ease;
-  }
-
-  .post-card:hover .post-cta {
-    color: var(--accent);
-  }
-
-  /* 正文排版 */
-  .prose {
-    font-size: 1.0125rem;
-    line-height: 1.9;
-    color: color-mix(in srgb, var(--foreground) 92%, var(--muted-foreground));
-  }
-
-  .prose > * + * {
-    margin-top: 1.15em;
-  }
-
-  .prose h2,
-  .prose h3,
-  .prose h4 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    line-height: 1.35;
-    color: var(--foreground);
-    scroll-margin-top: 5rem;
-  }
-
-  .prose h2 {
-    font-size: 1.5rem;
-    margin-top: 2.4em;
-  }
-
-  .prose h3 {
-    font-size: 1.2rem;
-    margin-top: 1.9em;
-  }
-
-  .prose h4 {
-    font-size: 1.05rem;
-    margin-top: 1.6em;
-  }
-
-  .prose p {
-    margin-bottom: 0;
-  }
-
-  .prose a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-decoration-style: dashed;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 1px;
-  }
-
-  .prose a:hover {
-    text-decoration-style: solid;
-  }
-
-  .prose strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .prose ul,
-  .prose ol {
-    padding-left: 1.35em;
-  }
-
-  .prose ul {
-    list-style: disc;
-  }
-
-  .prose ol {
-    list-style: decimal;
-  }
-
-  .prose li + li {
-    margin-top: 0.4em;
-  }
-
-  .prose li::marker {
-    color: color-mix(in srgb, var(--accent) 70%, var(--muted-foreground));
-  }
-
-  .prose blockquote {
-    border-left: 2px solid var(--accent);
-    padding-left: 1.1em;
-    color: var(--muted-foreground);
-    font-style: normal;
-  }
-
-  .prose hr {
-    border: 0;
-    border-top: 1px solid var(--border);
-    margin-block: 2.4em;
-  }
-
-  .prose img {
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    max-width: 100%;
-    height: auto;
-  }
-
-  .prose code {
-    font-size: 0.875em;
-    background-color: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 0.1em 0.36em;
-  }
-
-  .prose pre {
-    background-color: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1rem 1.15rem;
-    overflow-x: auto;
-    font-size: 0.875rem;
-    line-height: 1.7;
-  }
-
-  .prose pre code {
-    background: none;
-    border: 0;
-    padding: 0;
-    font-size: inherit;
-  }
-
-  .prose table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9375rem;
-  }
-
-  .prose th,
-  .prose td {
-    border: 1px solid var(--border);
-    padding: 0.55em 0.7em;
-    text-align: left;
-  }
-
-  .prose th {
-    background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
-    font-weight: 600;
-  }
-
-  /* 标签胶囊 */
-  .tag-pill {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.28rem 0.72rem;
-    font-size: 0.8125rem;
-    color: var(--muted-foreground);
-    transition: color 150ms ease, border-color 150ms ease;
-  }
-
-  .tag-pill:hover {
-    color: var(--accent);
-    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-  }
-
-  .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
+:target {
+  scroll-margin-block: 1rem;
 }

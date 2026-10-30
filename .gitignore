@@ -20,3 +20,6 @@ tmp-old-blog/
 
 # 本地截图预览
 preview-*.png
+
+# pagefind 搜索索引（构建产物，拷进 public 供 dev 用）
+public/pagefind/
