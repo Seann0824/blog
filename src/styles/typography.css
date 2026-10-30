@@ -104,13 +104,17 @@
       }
     }
 
-    code {
+    /* 行内代码。限定 :not(pre) >，否则会一并缩小代码块里的 code，
+       造成字号 0.9em 与 pre 的继承行高不匹配、末行被 overflow 裁掉 */
+    :not(pre) > code {
       @apply bg-muted/70 text-foreground px-1.5 py-0.5 wrap-break-word before:content-none after:content-none;
       font-size: 0.9em;
     }
 
     .astro-code code {
-      @apply flex-[1_0_100%] bg-inherit p-0;
+      @apply block bg-inherit p-0;
+      font-size: inherit;
+      line-height: inherit;
     }
 
     blockquote {
@@ -137,7 +141,11 @@
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply outline-border flex border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
+    @apply outline-border block border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
+    /* 用 block 而不是 flex：flex 下 code 成为 flex item，行盒按父级行高算，
+       字形却按缩小后的字号绘制，末行会被 overflow 裁掉一半 */
+    font-size: 0.875rem;
+    line-height: 1.75;
   }
 
   html[data-theme="dark"] .astro-code {
