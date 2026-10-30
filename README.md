@@ -29,28 +29,47 @@ elog.config.js               # 飞书拉取 + 图片转存配置
 
 ## 一、飞书侧准备（一次性）
 
-1. 打开 [飞书开放平台](https://open.feishu.cn/page/launcher?from=backend_oneclick) → 创建**企业自建应用**
-2. 「凭证与基础信息」里拿 `App ID` 和 `App Secret`
-3. 「权限管理」勾选下面三个**只读**权限：
+本站的飞书应用是直接用 `lark-cli config init --new` 建的，手工在开放平台点同样的东西也等价：
+
+1. 创建**企业自建应用**，拿到 `App ID` / `App Secret`
+2. 「权限管理」勾选这四个**只读**权限：
    - `docx:document:readonly` — 读文档内容
    - `wiki:wiki:readonly` — 读知识库节点
+   - `wiki:space:retrieve` — 读知识空间信息
    - `drive:drive:readonly` — 下载文档里的图片
-4. 「版本管理与发布」→ 创建版本并发布
-5. **关键一步**：打开你的知识库 → 右上角「···」→ 添加应用/成员 → 把你的应用加进去
-   > 漏了第 5 步，同步会全程 403。这是最常见的卡点。
+3. 「版本管理与发布」创建版本并发布，**管理员审批通过 scope 才会生效**（这一步 API 代办不了）
+4. **最容易漏的一步**：把应用加成知识库成员，否则同步全程读不到东西
+   ```bash
+   lark-cli wiki +member-add --space-id <知识库ID> \
+     --member-type appid --member-id cli_xxx --member-role member --as user
+   ```
+5. 知识库 URL 里 `/wiki/space/` 后面那串数字就是 `FEISHU_WIKI_ID`
 
-6. 把知识库 URL 里 `/wiki/space/` 后面那段记下来，就是 `FEISHU_WIKI_ID`
+> 建议单独建一个「博客」知识库当内容源，不要把私人笔记库整个当源。
 
 ## 二、本地跑通
 
 ```bash
-cp .elog.env.example .elog.env   # 填入 App ID / Secret / Wiki ID
-npm install
+cp .elog.env.example .elog.env   # 填 App ID / Secret / Wiki ID
+npm install                      # postinstall 会自动给 @feishux/api 打补丁
 npm run sync                     # 从飞书拉文章
 npm run dev                      # http://localhost:4321
 ```
 
 看到文章出现说明链路通了。
+
+几个实测出来的坑，已经写进代码里：
+
+- **`scripts/patch-feishux.mjs`**：elog 依赖的 `@feishux/api` 列知识库根节点时会把
+  `parent_node_token` 发成字面量 `"undefined"`，飞书返回 131005 并让 sync 直接崩。
+  `postinstall` 会自动打补丁（幂等），所以别跳过 `npm install`。
+- **frontmatter**：elog 默认只写正文，必须在 `elog.config.js` 里 `frontMatter.enable = true`，
+  否则 Astro 拿不到标题和日期。
+- **urlname**：飞书没设 urlname 时 elog 会填成文档 token，`src/lib/posts.ts` 会识别并回退用文件名当 slug。
+- **缓存**：`npm run sync` 是增量的，判定依据是 `elog.cache.json`。
+  想强制重拉用 `npm run sync:clean`——注意它会**清空 `src/content/posts`**。
+- **限流**：文档很多（几十篇以上）时，一次全量同步可能撞飞书接口的
+  `request trigger frequency limit`，重跑一次即可，必要时调小 `feishu.limit`。
 
 ## 三、部署到自己的域名
 

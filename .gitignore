@@ -9,3 +9,10 @@ dist/
 # elog 同步缓存
 elog-cache.json
 elog.cache.json
+qr-*.png
+
+# lark-cli / elog 同步过程的临时产物
+.lark-cli/
+qr-*.png
+tmp-*.json
+tmp-*.cjs

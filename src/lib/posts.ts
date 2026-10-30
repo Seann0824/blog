@@ -78,9 +78,21 @@ export function readingTime(body: string): number {
   return Math.max(1, Math.round(cjk / 400 + words / 200));
 }
 
+/**
+ * elog 会把没有显式 urlname 的文档自动填成 obj_token（22 位字母数字），
+ * 直接当 slug 会生成 /posts/WS2JdNyIEoEdrhx3sMqckciHnWg/ 这种链接。
+ * 所以只接受「像人写的」urlname，否则退回文件名。
+ */
+const TOKEN_LIKE = /^[A-Za-z0-9_-]{20,}$/;
+
+export function postSlug(post: Post): string {
+  const urlname = (post.data.urlname || '').trim();
+  if (urlname && !TOKEN_LIKE.test(urlname)) return urlname;
+  return post.id.replace(/\.md$/, '');
+}
+
 export function postHref(post: Post): string {
-  const slug = post.data.urlname || post.id;
-  return `/posts/${slug}/`;
+  return `/posts/${postSlug(post)}/`;
 }
 
 export async function getPosts(): Promise<Post[]> {

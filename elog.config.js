@@ -28,6 +28,10 @@ module.exports = {
       format: 'markdown',
       // 按知识库目录结构生成子文件夹；关掉则全部平铺
       catalog: false,
+      // 不开这个，elog 只写正文、不写 frontmatter，Astro 会拿不到标题/日期
+      frontMatter: {
+        enable: true,
+      },
     },
   },
   image: {

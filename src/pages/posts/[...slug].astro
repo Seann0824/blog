@@ -1,12 +1,12 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPosts, postDate, postTags, postHref, formatDate, readingTime } from '../../lib/posts';
+import { getPosts, postDate, postTags, postHref, postSlug, formatDate, readingTime } from '../../lib/posts';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
   return posts.map((post) => ({
-    params: { slug: post.data.urlname || post.id },
+    params: { slug: postSlug(post) },
     props: { post },
   }));
 }

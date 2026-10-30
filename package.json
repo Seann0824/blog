@@ -10,7 +10,8 @@
     "check": "astro check",
     "sync": "elog sync -e .elog.env",
     "sync:clean": "elog clean",
-    "sync:full": "elog sync -e .elog.env --full-cache"
+    "sync:full": "elog sync -e .elog.env --full-cache",
+    "postinstall": "node scripts/patch-feishux.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
