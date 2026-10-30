@@ -9,26 +9,30 @@
 
 ## 主题
 
-界面沿用旧站 sean.englife.space 的设计：Tailwind CSS v4 + shadcn 风格 token（`src/styles/global.css` 里的 `--background/--foreground/--muted-foreground/--accent/--border`），深色优先、可切换；字体自托管（Inter 正文 + Playfair Display 标题）。页面结构与类名（`.app-layout` / `.hero-*` / `.post-card` / `.post-cta` / `.prose`）都按旧站复刻。
+界面直接用现成主题 [AstroPaper](https://github.com/satnaing/astro-paper)（v7），没有做二次设计：
 
-可用环境变量：`SITE_NAME`、`SITE_TAGLINE`、`SITE_INTRO`、`GITHUB_URL`、`EMAIL`。
+- Tailwind CSS v4 + shadcn 风格 token，明暗双主题可切换
+- 中文 UI：`src/i18n/lang/zh-CN.ts` 覆盖主题的全部文案（文件名即 locale key，必须与 `astro.config.ts` 的 `locales` 一致）
+- 搜索用 pagefind，构建后自动索引
+- 站点信息（标题、作者、时区、每页篇数、功能开关）都在 `astro-paper.config.ts`
+- 字体走系统字体栈（`src/styles/theme.css` 的 `--font-app`），不依赖 Google Fonts 下载
+
+只用环境变量注入站点地址：`SITE_URL`（Cloudflare Pages 里配）。
 
 ## 目录结构
 
 ```
 src/
-├── content.config.ts        # 文章 schema（宽松，兼容 elog 的 frontmatter）
+├── content.config.ts        # 文章 schema：把 elog 的 frontmatter 归一化成主题字段
 ├── content/posts/           # elog 同步输出目录，勿手改
-├── lib/posts.ts             # 排序 / 日期 / 标签 / 阅读时长
-├── layouts/BaseLayout.astro # SEO meta、主题切换
-├── components/              # Header、Footer、PostList
-├── pages/
-│   ├── index.astro          # 首页（按年份分组的文章列表）
-│   ├── posts/[...slug].astro# 文章页
-│   ├── tags/                # 标签云 + 标签页
-│   ├── about.astro
-│   └── rss.xml.ts
-└── styles/global.css        # 全部样式，无 UI 框架
+├── content/pages/about.md   # 关于页正文
+├── components/ styles/      # AstroPaper 主题自带
+├── i18n/lang/zh-CN.ts       # 中文 UI 文案
+├── layouts/                 # Layout / PostLayout
+├── pages/                   # 首页 / posts / tags / archives / search / rss
+└── utils/                   # 排序、标签、slug 等主题工具
+astro.config.ts              # Astro 集成、i18n、shiki
+astro-paper.config.ts        # 站点与主题配置（标题/作者/时区/开关）
 elog.config.js               # 飞书拉取 + 图片转存配置
 .github/workflows/sync.yml   # 每小时同步
 ```
@@ -62,6 +66,9 @@ npm run sync                     # 从飞书拉文章
 npm run dev                      # http://localhost:4321
 ```
 
+> Astro 固定在 `7.3.8`：主题上游要求 Node ≥ 22.23.4，而本机是 22.21.1。
+> 升级 Node 后可以跟着主题升到 7.4.x。
+
 看到文章出现说明链路通了。
 
 几个实测出来的坑，已经写进代码里：
@@ -71,7 +78,9 @@ npm run dev                      # http://localhost:4321
   `postinstall` 会自动打补丁（幂等），所以别跳过 `npm install`。
 - **frontmatter**：elog 默认只写正文，必须在 `elog.config.js` 里 `frontMatter.enable = true`，
   否则 Astro 拿不到标题和日期。
-- **urlname**：飞书没设 urlname 时 elog 会填成文档 token，`src/lib/posts.ts` 会识别并回退用文件名当 slug。
+- **frontmatter 归一化**：`src/content.config.ts` 把 elog 写出的 `date/updated/tags/urlname`
+  转成主题要的 `pubDatetime/modDatetime/tags/description`，并把飞书的裸时间按北京时间重解释，
+  否则 21:30 发布的文章会显示成第二天。
 - **缓存**：`npm run sync` 是增量的，判定依据是 `elog.cache.json`。
   想强制重拉用 `npm run sync:clean`——注意它会**清空 `src/content/posts`**。
 - **限流**：文档很多（几十篇以上）时，一次全量同步可能撞飞书接口的
@@ -117,8 +126,8 @@ npm run dev                      # http://localhost:4321
 **同步后图片裂开？**
 图片没有转存成功。检查 `drive:drive:readonly` 权限是否开通，以及 `public/images/` 下有没有文件。图片走本地图床，跟着仓库一起部署，不依赖飞书外链。
 
-**异步下来的文件名是中文，URL 很丑？**
-两种解法：一是在文档里写 `urlname`；二是把 `elog.config.js` 里的 `filename: 'title'` 改成 `'docId'`（URL 变成稳定的 doc token，但不可读）。
+**同步下来的文件名是中文，URL 很丑？**
+主题的 slug 来自文件名（中文会按 kebabcase 保留，浏览器里显示成百分号编码）。想要英文短链，把文档标题写成英文，或在 `elog.config.js` 里把 `filename: 'title'` 改成 `'docId'`（URL 稳定但不可读）。
 
 **改完飞书多久生效？**
 最多 1 小时（cron 周期）。想立刻发，去 Actions 页面手动点 `Run workflow`，或本地 `npm run sync && git push`。
