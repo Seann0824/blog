@@ -97,14 +97,6 @@ const isActive = (path: string) => {
             {t.nav.about}
           </a>
         </li>
-        <li class="col-span-2">
-          <a
-            href={getRelativeLocaleUrl(locale, "resume")}
-            class:list={{ "active-nav": isActive("/resume") }}
-          >
-            {t.nav.resume}
-          </a>
-        </li>
         {
           features.search !== false && (
             <li class="sm:text-muted-foreground col-span-1 flex items-center justify-center">

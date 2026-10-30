@@ -1,36 +1,27 @@
 ---
-import { getEntry, render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
-import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
+import Resume from "@/components/Resume.astro";
 import config from "@/config";
 
-const about = await getEntry("pages", "about");
-
-if (!about) {
-  throw new Error(
-    "Missing content entry: `about.md` or `about.mdx` in `src/content/pages/`"
-  );
-}
-
-const { Content } = await render(about);
+// 关于页就是简历本体：内容来自 Resume 组件，与 /resume 共用同一份数据源
+const title = "关于";
+const description =
+  "Sean 的履历：前端工程师，做 AI 应用与 Agent 方向的产品工程。";
 ---
 
 <Layout
-  title={`${about.data.title} | ${config.site.title}`}
-  description={about.data.description}
-  ogImage={about.data.ogImage}
-  canonicalURL={about.data.canonicalURL}
+  title={`${title} | ${config.site.title}`}
+  description={description}
+  canonicalURL={new URL(Astro.url.pathname, Astro.site).href}
 >
   <Header />
 
   <Breadcrumb />
 
-  <Main pageTitle={about.data.title} class="app-prose">
-    <Content />
-  </Main>
+  <Resume />
 
   <Footer />
 </Layout>

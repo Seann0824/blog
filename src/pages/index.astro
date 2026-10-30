@@ -24,7 +24,7 @@ const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 const homePath = getRelativeLocaleUrl(locale, "");
 
-// 首页只留签名：一句定位 + 一句自述，完整履历在 /resume
+// 首页只留签名：一句定位 + 一句自述，完整履历在 /about
 const profile = {
   name: "Sean",
   role: "前端工程师 · AI 应用与 Agent 方向",
@@ -62,7 +62,7 @@ const profile = {
 
       <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
         <a
-          href={getRelativeLocaleUrl(locale, "resume")}
+          href={getRelativeLocaleUrl(locale, "about")}
           class="group text-accent font-gothic inline-flex items-center gap-1.5 text-[0.7rem] tracking-[0.3em] uppercase"
         >
           {t.nav.resume}
