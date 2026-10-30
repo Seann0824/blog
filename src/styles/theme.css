@@ -1,3 +1,9 @@
+/* =============================================================
+   和紙 / Washi —— 简约日式主题的设计 token
+   纸底取「生成り」的本色白，字色取墨，点缀取「弁柄」朱红。
+   圆角与阴影一概不用，层次只靠 1px 发丝线与留白拉开。
+   ============================================================= */
+
 /* Register design tokens for Tailwind v4 */
 @theme inline {
   --color-background: var(--background);
@@ -7,29 +13,39 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: ui-sans-serif, system-ui, -apple-system, "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+
+  /* 明朝体：标题与正文，日式排版的骨架 */
+  --font-app: var(--font-mincho);
+  --font-mincho: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Yu Mincho", "YuMincho",
+    "Songti SC", "Songti TC", "Noto Serif SC", "Noto Serif CJK SC",
+    "Source Han Serif SC", "SimSun", serif;
+
+  /* 哥特体：只用于日期、标签、导航这类小号元信息 */
+  --font-gothic: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic",
+    "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei",
+    system-ui, sans-serif;
 }
 
-/* Light theme values */
+/* Light theme values —— 生成り（本色和纸） */
 :root,
 [data-theme="light"] {
-  --background: #fdfdfd;
-  --foreground: #282728;
-  --accent: #006cac;
-  --accent-foreground: #ffffff;
-  --muted: #e6e6e6;
-  --muted-foreground: #6b7280;
-  --border: #ece9e9;
+  --background: #f7f4ec;
+  --foreground: #1c1a17;
+  --accent: #9c3a2a;
+  --accent-foreground: #f7f4ec;
+  --muted: #e8e2d3;
+  --muted-foreground: #7c766a;
+  --border: #ddd6c5;
 }
 
-/* Dark theme values */
+/* Dark theme values —— 夜の墨 */
 [data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --accent-foreground: #ffffff;
-  --muted: #343f60;
-  --muted-foreground: #afb9ca;
-  --border: #ab4b08;
+  --background: #191713;
+  --foreground: #e7e1d2;
+  --accent: #c9543a;
+  --accent-foreground: #191713;
+  --muted: #2b2721;
+  --muted-foreground: #9b9384;
+  --border: #35302a;
 }

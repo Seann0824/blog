@@ -9,13 +9,16 @@
 
 ## 主题
 
-界面直接用现成主题 [AstroPaper](https://github.com/satnaing/astro-paper)（v7），没有做二次设计：
+骨架是 [AstroPaper](https://github.com/satnaing/astro-paper)（v7），样式重绘成「和紙 / Washi」——简约日式：
 
-- Tailwind CSS v4 + shadcn 风格 token，明暗双主题可切换
+- 配色：生成り纸底 `#f7f4ec`、墨字 `#1c1a17`、弁柄朱红点缀 `#9c3a2a`；暗色是「夜の墨」`#191713`
+- 排版：明朝体打底（`--font-mincho`），正文行高 1.95、字距微放；日期/标签/导航这类元信息才用小号哥特体
+- 形制：零圆角、零阴影，层次只靠 1px 发丝线与留白；栏宽收窄到 42rem
+- 改动集中在 `src/styles/theme.css`（token 与字体栈）、`global.css`（栏宽、导航选中态、`tategaki` 竖排工具类）、`typography.css`（正文排版、h2 上方朱红细线）
 - 中文 UI：`src/i18n/lang/zh-CN.ts` 覆盖主题的全部文案（文件名即 locale key，必须与 `astro.config.ts` 的 `locales` 一致）
 - 搜索用 pagefind，构建后自动索引
 - 站点信息（标题、作者、时区、每页篇数、功能开关）都在 `astro-paper.config.ts`
-- 字体走系统字体栈（`src/styles/theme.css` 的 `--font-app`），不依赖 Google Fonts 下载
+- 字体走系统字体栈，不依赖 Google Fonts 下载：macOS 走 Hiragino Mincho / Songti SC，Windows 走 Yu Mincho / 中易宋体
 
 只用环境变量注入站点地址：`SITE_URL`（Cloudflare Pages 里配）。
 
@@ -26,7 +29,7 @@ src/
 ├── content.config.ts        # 文章 schema：把 elog 的 frontmatter 归一化成主题字段
 ├── content/posts/           # elog 同步输出目录，勿手改
 ├── content/pages/about.md   # 关于页正文
-├── components/ styles/      # AstroPaper 主题自带
+├── components/ styles/      # 组件与「和紙」主题样式（token/排版在 styles/）
 ├── i18n/lang/zh-CN.ts       # 中文 UI 文案
 ├── layouts/                 # Layout / PostLayout
 ├── pages/                   # 首页 / posts / tags / archives / search / rss

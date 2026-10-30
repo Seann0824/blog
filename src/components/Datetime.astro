@@ -33,15 +33,15 @@ const datetime = dayjs(isModified ? modDatetime : pubDatetime).tz(
   postTimezone ?? config.site.timezone
 );
 
-const date = datetime.format("D MMM, YYYY");
+const date = datetime.format("YYYY.MM.DD");
 ---
 
 <div
-  class:list={["text-muted-foreground flex items-center gap-x-2", className]}
+  class:list={["text-muted-foreground font-gothic flex items-center gap-x-1.5 tracking-[0.08em]", className]}
 >
   <IconCalendar
     class:list={[
-      "inline-block size-6 min-w-5.5",
+      "inline-block size-3.5 min-w-3.5",
       { "scale-90": size === "sm" },
     ]}
   />
@@ -53,7 +53,7 @@ const date = datetime.format("D MMM, YYYY");
     )
   }
   <time
-    class:list={["text-sm", { "sm:text-base": size === "lg" }]}
+    class:list={["text-xs", { "sm:text-sm": size === "lg" }]}
     datetime={datetime.toISOString()}
   >
     {date}

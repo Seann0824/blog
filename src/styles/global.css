@@ -11,27 +11,53 @@
     scrollbar-width: auto;
     scrollbar-color: var(--color-muted) transparent;
   }
+  html {
+    @apply antialiased;
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: "palt" 1;
+  }
+  body {
+    /* 行间留白是这套主题的主体：字距略放、行高拉满 */
+    letter-spacing: 0.015em;
+    text-rendering: optimizeLegibility;
+  }
   a,
   button,
   #main-content {
-    @apply outline-accent outline-offset-1 focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
+    @apply outline-accent outline-offset-1 focus-visible:no-underline focus-visible:outline-1 focus-visible:outline-dashed;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  ::selection {
+    background-color: color-mix(in oklab, var(--accent) 18%, transparent);
+    color: inherit;
+  }
 }
 
+/* 窄栏：日式排版靠左右大量留白撑出安静感 */
 @utility max-w-app {
-  @apply max-w-3xl;
+  @apply max-w-2xl;
 }
 
 @utility app-layout {
-  @apply max-w-app mx-auto w-full px-4;
+  @apply max-w-app mx-auto w-full px-5 sm:px-6;
 }
 
+/* 导航选中态：一条细实线，不用波浪线 */
 @utility active-nav {
-  @apply underline decoration-wavy decoration-2 underline-offset-8;
+  @apply decoration-accent decoration-1 underline-offset-8;
+}
+
+/* 竖排小字（縦書き），只在宽屏做点缀 */
+@utility tategaki {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+@utility hairline-t {
+  @apply border-border border-t;
 }
 
 :target {
