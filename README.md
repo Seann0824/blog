@@ -7,6 +7,12 @@
 （写作）        (每小时)       public/images/*          (静态 HTML)              （你的域名）
 ```
 
+## 主题
+
+界面沿用旧站 sean.englife.space 的设计：Tailwind CSS v4 + shadcn 风格 token（`src/styles/global.css` 里的 `--background/--foreground/--muted-foreground/--accent/--border`），深色优先、可切换；字体自托管（Inter 正文 + Playfair Display 标题）。页面结构与类名（`.app-layout` / `.hero-*` / `.post-card` / `.post-cta` / `.prose`）都按旧站复刻。
+
+可用环境变量：`SITE_NAME`、`SITE_TAGLINE`、`SITE_INTRO`、`GITHUB_URL`、`EMAIL`。
+
 ## 目录结构
 
 ```

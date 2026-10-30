@@ -16,3 +16,7 @@ qr-*.png
 qr-*.png
 tmp-*.json
 tmp-*.cjs
+tmp-old-blog/
+
+# 本地截图预览
+preview-*.png

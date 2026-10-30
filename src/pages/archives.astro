@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, postDate, postHref, formatDate } from '../lib/posts';
+
+const posts = await getPosts();
+
+// 按年份分组，和旧站归档页一致
+const groups = new Map<string, typeof posts>();
+for (const post of posts) {
+  const date = postDate(post);
+  const year = date.getTime() ? String(date.getFullYear()) : '未标注日期';
+  if (!groups.has(year)) groups.set(year, []);
+  groups.get(year)!.push(post);
+}
+---
+<BaseLayout title="归档" description="按年份浏览全部文章">
+  <section class="border-b border-border pt-12 pb-10">
+    <h1 class="hero-title">归档</h1>
+    <p class="hero-meta">共 {posts.length} 篇</p>
+  </section>
+
+  {posts.length === 0 ? (
+    <p class="my-8 text-muted-foreground">还没有文章。</p>
+  ) : (
+    Array.from(groups.entries()).map(([year, items]) => (
+      <section class="pt-10">
+        <h2 class="section-title">{year}</h2>
+        <ul class="mt-4 space-y-2">
+          {items.map((post) => (
+            <li class="flex items-baseline gap-3">
+              <span class="w-24 shrink-0 text-sm text-muted-foreground">
+                {formatDate(postDate(post)).slice(5)}
+              </span>
+              <a
+                href={postHref(post)}
+                class="text-foreground transition-colors hover:text-accent"
+              >
+                {post.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  )}
+</BaseLayout>

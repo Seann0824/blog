@@ -1,39 +1,20 @@
 ---
-import { postDate, postTags, postHref, formatDate, type Post } from '../lib/posts';
+import PostCard from './PostCard.astro';
+import type { Post } from '../lib/posts';
 
 interface Props {
   posts: Post[];
 }
 const { posts } = Astro.props;
-
-// 按年份分组展示，和大多数静态博客一致
-const groups = new Map<string, Post[]>();
-for (const post of posts) {
-  const d = postDate(post);
-  const year = d.getTime() ? String(d.getFullYear()) : '未标注日期';
-  if (!groups.has(year)) groups.set(year, []);
-  groups.get(year)!.push(post);
-}
 ---
-{groups.size === 0 ? (
-  <p class="empty">还没有文章。在飞书里写一篇，然后跑 <code>npm run sync</code>。</p>
+{posts.length === 0 ? (
+  <p class="my-8 text-muted-foreground">
+    还没有文章。在飞书里写一篇，然后跑 <code>npm run sync</code>。
+  </p>
 ) : (
-  Array.from(groups.entries()).map(([year, items]) => (
-    <section class="year-group">
-      <h2 class="year-label">{year}</h2>
-      <ul class="post-list">
-        {items.map((post) => (
-          <li class="post-item">
-            <a href={postHref(post)}>
-              <span class="post-title">{post.data.title}</span>
-              {postTags(post).length > 0 && (
-                <span class="post-meta-inline">{postTags(post).slice(0, 2).join(' · ')}</span>
-              )}
-              <span class="post-date">{formatDate(postDate(post))}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))
+  <ul>
+    {posts.map((post) => (
+      <PostCard post={post} />
+    ))}
+  </ul>
 )}
