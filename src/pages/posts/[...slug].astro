@@ -1,0 +1,54 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts, postDate, postTags, postHref, formatDate, readingTime } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.data.urlname || post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const tags = postTags(post);
+const date = postDate(post);
+const minutes = readingTime(post.body ?? '');
+
+const posts = await getPosts();
+const index = posts.findIndex((p) => p.id === post.id);
+const newer = index > 0 ? posts[index - 1] : null;
+const older = index >= 0 && index < posts.length - 1 ? posts[index + 1] : null;
+---
+<BaseLayout title={post.data.title} description={post.data.description ?? ''} bare ogType="article">
+  <article>
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        {date.getTime() > 0 && <time datetime={date.toISOString()}>{formatDate(date)}</time>}
+        <span>约 {minutes} 分钟</span>
+        {tags.length > 0 && (
+          <span>
+            {tags.map((tag, i) => (
+              <>
+                {i > 0 && ' · '}
+                <a class="tag-link" href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+              </>
+            ))}
+          </span>
+        )}
+      </div>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="post-footer">
+      <span>{newer && <a href={postHref(newer)}>← {newer.data.title}</a>}</span>
+      <span>{older && <a href={postHref(older)}>{older.data.title} →</a>}</span>
+    </footer>
+  </article>
+</BaseLayout>

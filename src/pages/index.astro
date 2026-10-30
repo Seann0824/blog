@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts } from '../lib/posts';
+
+const posts = await getPosts();
+---
+<BaseLayout title={import.meta.env.SITE_NAME || 'Sean 的博客'}>
+  <section class="intro">
+    <h1>{import.meta.env.SITE_NAME || 'Sean 的博客'}</h1>
+    <p>{import.meta.env.SITE_TAGLINE || '记录一些想法、工具与生活。文章在飞书里写，这里只负责好看地展示。'}</p>
+  </section>
+  <PostList posts={posts} />
+</BaseLayout>

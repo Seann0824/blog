@@ -1,0 +1,55 @@
+name: Sync from Feishu
+
+on:
+  schedule:
+    # 每小时第 7 分钟同步一次（UTC），避开整点高峰
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: feishu-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Write elog credentials
+        run: |
+          cat > .elog.env <<ENVEOF
+          FEISHU_APP_ID=${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET=${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_WIKI_ID=${{ secrets.FEISHU_WIKI_ID }}
+          FEISHU_FOLDER_TOKEN=${{ secrets.FEISHU_FOLDER_TOKEN }}
+          FEISHU_SOURCE_TYPE=${{ vars.FEISHU_SOURCE_TYPE || 'wiki' }}
+          ENVEOF
+
+      - name: Pull posts from Feishu
+        run: npx elog sync -e .elog.env
+
+      - name: Commit if content changed
+        id: commit
+        run: |
+          git config user.name "feishu-sync-bot"
+          git config user.email "actions@github.com"
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add -A
+            git commit -m "chore: sync posts from Feishu ($(date -u +%Y-%m-%dT%H:%MZ))"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "内容无变化，跳过提交"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi

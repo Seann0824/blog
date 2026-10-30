@@ -1,0 +1,14 @@
+---
+const SITE_NAME = import.meta.env.SITE_NAME || 'Sean 的博客';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container">
+    <span>© {year} {SITE_NAME}</span>
+    <span>
+      <a href="/rss.xml">RSS</a>
+      <span aria-hidden="true"> · </span>
+      <a href="https://github.com" rel="noopener" target="_blank">GitHub</a>
+    </span>
+  </div>
+</footer>

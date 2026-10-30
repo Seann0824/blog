@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const name = import.meta.env.SITE_NAME || 'Sean 的博客';
+---
+<BaseLayout title="关于">
+  <h1 class="page-title">关于</h1>
+  <div class="prose">
+    <p>你好，我是 Sean。这里是我的个人站点。</p>
+    <p>
+      所有文章都在飞书文档里写作，通过 elog 同步成 Markdown，再由 Astro 构建成静态页面。
+      写作时我在一个熟悉的地方，形如发布的部分交给流水线。
+    </p>
+    <h2>找我</h2>
+    <ul>
+      <li>GitHub：<a href="https://github.com" rel="noopener" target="_blank">@sean</a></li>
+      <li>邮箱：<a href="mailto:hi@example.com">hi@example.com</a></li>
+    </ul>
+    <h2>技术栈</h2>
+    <ul>
+      <li>写作端：飞书云文档 / 知识库</li>
+      <li>同步：<a href="https://github.com/LetTTGACO/elog" rel="noopener" target="_blank">elog</a> CLI（GitHub Actions 定时跑）</li>
+      <li>渲染：Astro 静态站点</li>
+      <li>部署：Cloudflare Pages + 自定义域名</li>
+    </ul>
+  </div>
+</BaseLayout>

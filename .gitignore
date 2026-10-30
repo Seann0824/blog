@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+
+# elog 凭证（含飞书 appSecret），永不入库
+.elog.env
+
+# elog 同步缓存
+elog-cache.json
+elog.cache.json

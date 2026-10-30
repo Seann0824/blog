@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllTags } from '../../lib/posts';
+
+const tags = await getAllTags();
+---
+<BaseLayout title="标签" description="按标签浏览全部文章">
+  <h1 class="page-title">标签</h1>
+  {tags.size === 0 ? (
+    <p class="empty">还没有标签。在飞书文档里给文章加上 tags 即可。</p>
+  ) : (
+    <ul class="tag-cloud">
+      {Array.from(tags.entries()).map(([tag, items]) => (
+        <li>
+          <a href={`/tags/${encodeURIComponent(tag)}/`}>
+            {tag}
+            <span class="tag-count">{items.length}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
