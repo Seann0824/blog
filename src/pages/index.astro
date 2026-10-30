@@ -26,8 +26,7 @@ const homePath = getRelativeLocaleUrl(locale, "");
 
 // 首页只留签名：一句定位 + 一句自述，完整履历在 /resume
 const profile = {
-  name: "肖元彪",
-  en: "Sean",
+  name: "Sean",
   role: "前端工程师 · AI 应用与 Agent 方向",
   place: "深圳",
   signature: "把复杂的交互做干净，把记得的事写下来。",
@@ -41,38 +40,27 @@ const profile = {
     data-home-path={homePath}
     class="app-layout my-1"
   >
-    <section id="hero" class="border-border relative border-b pt-16 pb-14">
-      <span
-        aria-hidden="true"
-        class="tategaki text-accent/60 pointer-events-none absolute inset-e-1 top-16 hidden text-[0.7rem] tracking-[0.55em] sm:block"
-      >
-        記録
-      </span>
-
+    <section id="hero" class="border-border border-b pt-14 pb-12">
       <p
         class="text-muted-foreground font-gothic text-[0.65rem] tracking-[0.4em] uppercase"
       >
         profile
       </p>
-      <h1 class="mt-5 text-3xl font-semibold tracking-[0.18em] sm:text-4xl">
+      <h1 class="mt-4 text-4xl font-semibold tracking-[0.2em]">
         {profile.name}
-        <span
-          class="text-muted-foreground ms-2 text-base font-normal tracking-[0.2em]"
-        >
-          / {profile.en}
-        </span>
       </h1>
       <p
-        class="text-muted-foreground font-gothic mt-4 text-xs tracking-[0.14em]"
+        class="text-muted-foreground font-gothic mt-3 text-xs tracking-[0.14em]"
       >
         {profile.role} · {profile.place}
       </p>
 
-      <p class="mt-8 text-[1.05rem] leading-[1.95] tracking-[0.02em]">
+      <div class="border-accent mt-9 w-8 border-t"></div>
+      <p class="mt-5 text-lg leading-[1.9] tracking-[0.03em]">
         {profile.signature}
       </p>
 
-      <div class="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
         <a
           href={getRelativeLocaleUrl(locale, "resume")}
           class="group text-accent font-gothic inline-flex items-center gap-1.5 text-[0.7rem] tracking-[0.3em] uppercase"
@@ -84,6 +72,7 @@ const profile = {
             class="stroke-accent inline-block transition-transform group-hover:translate-x-1"
           />
         </a>
+        <span aria-hidden="true" class="text-border select-none">/</span>
         <a
           target="_blank"
           href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rss.xml`}
@@ -117,7 +106,7 @@ const profile = {
         <section
           id="featured"
           class:list={[
-            "pt-16 pb-6",
+            "pt-12 pb-6",
             { "border-border border-b": recentPosts.length > 0 },
           ]}
         >
@@ -135,7 +124,7 @@ const profile = {
 
     {
       recentPosts.length > 0 && (
-        <section id="recent-posts" class="pt-16 pb-6">
+        <section id="recent-posts" class="pt-12 pb-6">
           <h2 class="font-gothic text-muted-foreground mb-1 text-[0.7rem] tracking-[0.35em]">
             {t.home.recentPosts}
           </h2>
