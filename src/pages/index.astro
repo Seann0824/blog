@@ -137,15 +137,20 @@ const profile = {
       )
     }
 
-    <div class="my-14 text-center">
-      <LinkButton
-        href={getRelativeLocaleUrl(locale, "posts")}
-        class="font-gothic text-[0.72rem] tracking-[0.3em]"
-      >
-        {t.home.allPosts}
-        <IconArrowRight class="inline-block rtl:-rotate-180" />
-      </LinkButton>
-    </div>
+    {/* 固定展示条数装不下时才给「全部文章」入口，避免小站多出一个空转的出口 */}
+    {
+      recentPosts.length > postsConfig.perIndex && (
+        <div class="my-14 text-center">
+          <LinkButton
+            href={getRelativeLocaleUrl(locale, "posts")}
+            class="font-gothic text-[0.72rem] tracking-[0.3em]"
+          >
+            {t.home.allPosts}
+            <IconArrowRight class="inline-block rtl:-rotate-180" />
+          </LinkButton>
+        </div>
+      )
+    }
   </main>
   <Footer />
 </Layout>
