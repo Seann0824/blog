@@ -1,0 +1,320 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Footer from "@/components/Footer.astro";
+
+const profile = {
+  name: "肖元彪",
+  en: "Sean",
+  role: "前端工程师 · AI 应用与 Agent 方向",
+  place: "深圳",
+  github: { label: "github.com/Sean0824", href: "https://github.com/Sean0824" },
+};
+
+const summary =
+  "前端工程师，2023 年从协同设计工具入行，2026 年转入广告系统。擅长把复杂的交互和工程问题做干净：TypeScript / React / Vue 打底，做过 Agent Loop、Tool Calling、MCP Server 与 SSE 流式解析，也用 Node 和 Rust 写服务与插件。";
+
+const jobs = [
+  {
+    period: "2026.01 — 2026.10",
+    org: "字节跳动 · TikTok Ads",
+    role: "前端工程师",
+    place: "深圳",
+    points: [
+      "负责 TikTok Ads 素材库与创编流程前端开发，独立推进素材绑品与 Creative Library 列表重构，覆盖需求评审、方案设计、开发到灰度上线全流程。",
+      "把素材绑品做成公共能力：基于现有 Module Federation 基座封装 CreativeRelations 远程组件供多项目复用，并统一业务白名单 Hook 集中管理多条业务线的准入判断。",
+      "能力上线后覆盖两条业务线、4,000+ 广告主与 600+ 重点客户；目标客户中已绑定商品视频的收入占比从约 10% 提升至 20%。",
+    ],
+  },
+  {
+    period: "2023.07 — 2025.12",
+    org: "蓝湖 · MasterGo",
+    role: "前端工程师",
+    place: "北京",
+    points: [
+      "承担 MasterGo Agent 与开发者工具开发，涵盖 Agent、MCP Server、VS Code 插件与本地字体服务。",
+      "推进工程化改造：TypeScript 全量类型安全改造并以 CI 阻断新增类型错误、修复官网 SSR 内存泄漏、拆分巨型业务组件。",
+    ],
+  },
+];
+
+const projects = [
+  {
+    period: "2026.01 — 2026.10",
+    name: "TikTok 广告投放平台 · 素材库与创编流程",
+    note: "面向全球广告主的广告投放平台",
+    points: [
+      "独立负责素材库列表重构的前端方案与落地，统一 Video / Image / Post 三类素材的筛选、日期、自定义列、下载与删除等通用能力。",
+      "设计前端灰度、回滚与新旧链路隔离方案，梳理后端接口改造项与迁移顺序，推动新接口平滑替换。",
+    ],
+  },
+  {
+    period: "2023.07 — 2025.12",
+    name: "MasterGo Agent / MCP",
+    note: "通过自然语言生成、编辑设计稿，并让 AI 读取设计稿数据生成代码",
+    points: [
+      "实现 Agent Loop 核心逻辑，支撑 SSE 流式消息解析与展示、工具调度及多会话管理；自研流式 XML 解析器，配套单元测试保障解析可靠。",
+      "封装 Agent Tool 统一管理层，标准化工具逻辑与提示词、提供通用扩展接口；搭建规范 AI 组件库，约束 AI 输出贴合团队设计规范。",
+      "从零搭建 Node 服务，实现图层转 DSL、鉴权、限流，支撑 AI 获取设计数据并生成前端代码。",
+      "开发 npm 包 @mastergo/magic-mcp 供 AI 调用服务端接口，搭建 CI/CD 流水线自动发布，累计下载量 18 万+；推动 MCP 服务上云，移除用户本地 Node.js 环境依赖。",
+    ],
+  },
+  {
+    period: "2023.07 — 2025.12",
+    name: "MasterGo 本地字体服务（Rust 重写）",
+    note: "读取本地字体供设计画布使用，从插件到服务整体重构",
+    points: [
+      "基于 Rust、Tokio、TTF-parser 完成插件底层重构，解决原有解析低效与内存泄漏问题，配套单元测试保障字体解析结果一致性。",
+      "优化打包与资源复用、重构构建流程统一插件代码：安装包体积 65MB → 3MB，启动耗时 10s → 1s，运行内存 700MB → 15MB。",
+    ],
+  },
+];
+
+const skills = [
+  {
+    label: "前端技术",
+    text: "TypeScript、React、Vue；具备 Next、Nuxt 项目经验",
+  },
+  {
+    label: "AI 工程",
+    text: "Agent Loop、Tool Calling、MCP Server 及 SSE 流式协议解析",
+  },
+  {
+    label: "工程与服务端",
+    text: "Monorepo、CI/CD、Module Federation 远程组件方案设计与开发；Node、Rust 开发经验",
+  },
+];
+
+const education = {
+  period: "2019 — 2023",
+  org: "内蒙古科技大学 · 软件工程 · 本科",
+  place: "内蒙古包头",
+  awards: [
+    "高教社杯全国大学生数学建模竞赛 · 国家级二等奖",
+    "CCPC 内蒙古自治区大学生程序设计竞赛 · 省级一等奖",
+  ],
+};
+---
+
+<Layout
+  title={`简历 | ${profile.name}`}
+  description={summary}
+  canonicalURL={new URL(Astro.url.pathname, Astro.site).href}
+>
+  <Header />
+
+  <Breadcrumb />
+
+  <main id="main-content" class="app-layout pb-10">
+    <!-- 抬头：像履歴書一样，先声明自己是谁 -->
+    <header class="border-border border-b pt-4 pb-8">
+      <p
+        class="text-muted-foreground font-gothic text-[0.65rem] tracking-[0.4em] uppercase"
+      >
+        curriculum vitae
+      </p>
+      <h1 class="mt-4 text-3xl font-semibold tracking-[0.18em] sm:text-4xl">
+        {profile.name}
+        <span
+          class="text-muted-foreground ms-2 text-base font-normal tracking-[0.2em]"
+        >
+          / {profile.en}
+        </span>
+      </h1>
+      <p class="text-muted-foreground font-gothic mt-4 text-xs tracking-[0.14em]">
+        {profile.role} · {profile.place}
+      </p>
+      <div
+        class="text-muted-foreground font-gothic mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.72rem] tracking-[0.1em]"
+      >
+        <a
+          href={profile.github.href}
+          target="_blank"
+          rel="noopener"
+          class="hover:text-accent underline decoration-1 underline-offset-4 transition-colors"
+        >
+          {profile.github.label}
+        </a>
+        <button
+          type="button"
+          id="print-cv"
+          class="hover:text-accent underline decoration-1 underline-offset-4 transition-colors"
+        >
+          存为 PDF
+        </button>
+      </div>
+    </header>
+
+    <section class="border-border border-b pt-10 pb-4">
+      <h2
+        class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.35em]"
+      >
+        概要
+      </h2>
+      <p class="mt-4 leading-[1.95]">{summary}</p>
+    </section>
+
+    <!-- 仕事歴：左栏年份、右栏内容 -->
+    <section class="border-border border-b pt-10 pb-4">
+      <h2
+        class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.35em]"
+      >
+        工作经历
+      </h2>
+      <ul class="mt-4">
+        {
+          jobs.map(job => (
+            <li class="border-border grid grid-cols-1 gap-2 border-b py-6 first:pt-0 sm:grid-cols-[8.5rem_1fr] sm:gap-5">
+              <p class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.12em] sm:pt-1">
+                {job.period}
+              </p>
+              <div>
+                <p class="font-medium tracking-[0.02em]">
+                  {job.org}
+                  <span class="text-muted-foreground ms-2 text-xs font-normal">
+                    {job.role} · {job.place}
+                  </span>
+                </p>
+                <ul class="mt-3 space-y-2">
+                  {job.points.map(point => (
+                    <li class="text-foreground/85 flex gap-2 text-[0.92rem] leading-[1.9]">
+                      <span aria-hidden="true" class="text-accent/70 select-none">
+                        ―
+                      </span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="border-border border-b pt-10 pb-4">
+      <h2
+        class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.35em]"
+      >
+        代表项目
+      </h2>
+      <ul class="mt-4">
+        {
+          projects.map(project => (
+            <li class="border-border grid grid-cols-1 gap-2 border-b py-6 first:pt-0 last:border-b-0 sm:grid-cols-[8.5rem_1fr] sm:gap-5">
+              <p class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.12em] sm:pt-1">
+                {project.period}
+              </p>
+              <div>
+                <p class="font-medium tracking-[0.02em]">{project.name}</p>
+                <p class="text-muted-foreground mt-1 text-xs tracking-[0.04em]">
+                  {project.note}
+                </p>
+                <ul class="mt-3 space-y-2">
+                  {project.points.map(point => (
+                    <li class="text-foreground/85 flex gap-2 text-[0.92rem] leading-[1.9]">
+                      <span aria-hidden="true" class="text-accent/70 select-none">
+                        ―
+                      </span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="border-border border-b pt-10 pb-4">
+      <h2
+        class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.35em]"
+      >
+        专业技能
+      </h2>
+      <dl class="mt-4">
+        {
+          skills.map(skill => (
+            <div class="border-border grid grid-cols-1 gap-1 border-b py-4 last:border-b-0 sm:grid-cols-[8.5rem_1fr] sm:gap-5">
+              <dt class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.12em] sm:pt-1">
+                {skill.label}
+              </dt>
+              <dd class="text-[0.92rem] leading-[1.85]">{skill.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="pt-10 pb-4">
+      <h2
+        class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.35em]"
+      >
+        教育经历
+      </h2>
+      <div
+        class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-[8.5rem_1fr] sm:gap-5"
+      >
+        <p class="text-muted-foreground font-gothic text-[0.7rem] tracking-[0.12em] sm:pt-1">
+          {education.period}
+        </p>
+        <div>
+          <p class="font-medium tracking-[0.02em]">{education.org}</p>
+          <p class="text-muted-foreground mt-1 text-xs tracking-[0.04em]">
+            {education.place}
+          </p>
+          <ul class="mt-3 space-y-1">
+            {education.awards.map(award => (
+              <li class="text-foreground/85 text-[0.92rem] leading-[1.8]">
+                {award}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script is:inline data-astro-rerun>
+  document.getElementById("print-cv")?.addEventListener("click", () => {
+    window.print();
+  });
+</script>
+
+<style is:global>
+  /* 打印/存 PDF 时只留履历本体：去掉导航、页脚与所有交互装饰 */
+  @media print {
+    header:not(main header),
+    footer,
+    #skip-to-content,
+    .progress-container {
+      display: none !important;
+    }
+    main {
+      max-width: none;
+      padding: 0;
+    }
+    main header {
+      padding-top: 0;
+    }
+    button#print-cv {
+      display: none !important;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    section,
+    li {
+      break-inside: avoid;
+    }
+    body {
+      background: #fff;
+    }
+  }
+</style>
