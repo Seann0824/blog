@@ -18,8 +18,10 @@ const t = useTranslations(Astro.currentLocale);
     const btn = document.querySelector("[data-button='back-to-top']");
     if (!btn) return;
     btn.addEventListener("click", () => {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
+      // 滚动发生在 #main-content 上，不是 window
+      const scroller = document.getElementById("main-content");
+      if (scroller) scroller.scrollTo({ top: 0, behavior: "instant" });
+      else window.scrollTo({ top: 0, behavior: "instant" });
     });
   }
   backToTop();

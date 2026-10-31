@@ -33,7 +33,7 @@ const rssHref = getRelativeLocaleUrl(
 <html
   dir={site.dir ?? "ltr"}
   lang={Astro.currentLocale ?? site.lang}
-  class="overflow-y-scroll scroll-smooth"
+  class="h-full overflow-hidden"
 >
   <head>
     <meta charset="UTF-8" />
@@ -111,7 +111,7 @@ const rssHref = getRelativeLocaleUrl(
     <ClientRouter />
   </head>
   <body
-    class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col"
+    class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex h-dvh flex-col overflow-hidden"
   >
     <slot />
     <script>

@@ -108,11 +108,10 @@ const ogImage = ogImageUrl
 
   <BackButton />
 
-  <main
-    id="main-content"
-    class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
-    data-pagefind-body
-  >
+  <main id="main-content" class="app-scroll" data-pagefind-body>
+    <div
+      class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
+    >
     <h1
       style={{ viewTransitionName: toTransitionName(post.id) }}
       class="inline-block text-2xl font-semibold tracking-[0.03em] sm:text-3xl"
@@ -163,6 +162,7 @@ const ogImage = ogImageUrl
     </div>
 
     {(prevPost || nextPost) && <AdjacentPostNav {prevPost} {nextPost} />}
+      </div>
   </main>
   <Footer />
 </PostLayout>
@@ -183,20 +183,17 @@ const ogImage = ogImageUrl
   createProgressBar();
 
   function updateScrollProgress() {
-    document.addEventListener("scroll", () => {
-      const winScroll =
-        document.body.scrollTop || document.documentElement.scrollTop;
-      const height =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      if (document) {
-        const myBar = document.getElementById("myBar");
-        if (myBar) {
-          myBar.style.width = scrolled + "%";
-        }
-      }
-    });
+    // 页面本身不再滚动，滚动的是 #main-content
+    const scroller = document.getElementById("main-content");
+    if (!scroller) return;
+    const update = () => {
+      const max = scroller.scrollHeight - scroller.clientHeight;
+      const scrolled = max > 0 ? (scroller.scrollTop / max) * 100 : 0;
+      const myBar = document.getElementById("myBar");
+      if (myBar) myBar.style.width = scrolled + "%";
+    };
+    scroller.addEventListener("scroll", update, { passive: true });
+    update();
   }
   updateScrollProgress();
 
@@ -531,7 +528,9 @@ const ogImage = ogImageUrl
     );
   }
 
-  document.addEventListener("astro:after-swap", () =>
-    window.scrollTo({ left: 0, top: 0, behavior: "instant" })
-  );
+  document.addEventListener("astro:after-swap", () => {
+    const scroller = document.getElementById("main-content");
+    if (scroller) scroller.scrollTo({ top: 0, behavior: "instant" });
+    else window.scrollTo({ left: 0, top: 0, behavior: "instant" });
+  });
 </script>

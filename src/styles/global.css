@@ -45,6 +45,18 @@
   @apply max-w-app mx-auto w-full px-5 sm:px-6;
 }
 
+/* 整屏一屏高：header 与 footer 固定，只有这一段内容自己滚。
+   滚动条落在布局边缘而不是 42rem 内容列上。 */
+@utility app-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
 /* 导航选中态：一条细实线，不用波浪线 */
 @utility active-nav {
   @apply decoration-accent decoration-1 underline-offset-8;
@@ -62,4 +74,17 @@
 
 :target {
   scroll-margin-block: 1rem;
+}
+
+/* 打印时把「一屏高 + 内部滚动」拆掉，否则只能印出第一屏 */
+@media print {
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .app-scroll {
+    overflow: visible !important;
+    min-height: 0 !important;
+  }
 }

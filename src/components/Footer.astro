@@ -9,7 +9,7 @@ type Props = {
   noMarginTop?: boolean;
 } & HTMLAttributes<"footer">;
 
-const { noMarginTop = false, class: className, ...attrs } = Astro.props;
+const { noMarginTop: _noMarginTop = false, class: className, ...attrs } = Astro.props;
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const currentYear = new Date().getFullYear();
@@ -17,7 +17,7 @@ const t = useTranslations(locale);
 ---
 
 <footer
-  class:list={["app-layout", { "mt-16": !noMarginTop }, className]}
+  class:list={["app-layout shrink-0", className]}
   {...attrs}
 >
   <div

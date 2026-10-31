@@ -14,10 +14,8 @@ const t = useTranslations(locale);
 <Layout title={`${t.notFound.title} | ${config.site.title}`}>
   <Header />
 
-  <main
-    id="main-content"
-    class="app-layout my-1 flex flex-1 items-center justify-center"
-  >
+  <main id="main-content" class="app-scroll">
+    <div class="app-layout flex h-full items-center justify-center">
     <div class="mb-14 flex flex-col items-center justify-center">
       <h1 class="text-accent text-9xl font-bold">404</h1>
       <span aria-hidden="true"> ¯\_(ツ)_/¯ </span>
@@ -29,6 +27,7 @@ const t = useTranslations(locale);
         {t.notFound.goHome}
       </LinkButton>
     </div>
+      </div>
   </main>
 
   <Footer />
