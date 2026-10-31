@@ -110,7 +110,7 @@ const ogImage = ogImageUrl
 
   <main id="main-content" class="app-scroll" data-pagefind-body>
     <div
-      class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
+      class:list={["app-layout", "max-sm:mt-6", { "mt-8": !config.features.showBackButton }]}
     >
     <h1
       style={{ viewTransitionName: toTransitionName(post.id) }}
@@ -186,13 +186,21 @@ const ogImage = ogImageUrl
     // 页面本身不再滚动，滚动的是 #main-content
     const scroller = document.getElementById("main-content");
     if (!scroller) return;
+    // 桌面端滚动的是 #main-content，手机端整页滚动，这里两种都跟
+    const locked = () => getComputedStyle(scroller).overflowY === "auto";
     const update = () => {
-      const max = scroller.scrollHeight - scroller.clientHeight;
-      const scrolled = max > 0 ? (scroller.scrollTop / max) * 100 : 0;
+      const own = locked();
+      const max = own
+        ? scroller.scrollHeight - scroller.clientHeight
+        : document.documentElement.scrollHeight - window.innerHeight;
+      const top = own ? scroller.scrollTop : window.scrollY;
+      const scrolled = max > 0 ? (top / max) * 100 : 0;
       const myBar = document.getElementById("myBar");
       if (myBar) myBar.style.width = scrolled + "%";
     };
     scroller.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
     update();
   }
   updateScrollProgress();

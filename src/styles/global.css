@@ -47,6 +47,16 @@
 
 /* 整屏一屏高：header 与 footer 固定，只有这一段内容自己滚。
    滚动条落在布局边缘而不是 42rem 内容列上。 */
+/* 手机上不锁屏：整页自然滚动，页脚回到正文之后，阅读区最大化。
+   桌面端（>= 40rem）仍是一屏高 + 内容区内部滚动。 */
+@media (width < 40rem) {
+  .app-scroll {
+    flex: none;
+    min-height: auto;
+    overflow: visible;
+  }
+}
+
 @utility app-scroll {
   flex: 1 1 auto;
   min-height: 0;

@@ -21,10 +21,10 @@ const t = useTranslations(locale);
   {...attrs}
 >
   <div
-    class="border-border font-gothic flex flex-col items-center justify-between border-t py-8 text-xs tracking-[0.12em] sm:flex-row-reverse sm:py-6"
+    class="font-gothic flex flex-col items-center justify-between py-6 text-xs tracking-[0.12em] sm:border-t sm:border-border sm:flex-row-reverse"
   >
     <Socials />
-    <div class="my-2 flex flex-col items-center whitespace-nowrap sm:flex-row">
+    <div class="my-1 flex flex-row items-center justify-center whitespace-nowrap">
       {
         config.features.showArchives && (
           <>
@@ -34,13 +34,13 @@ const t = useTranslations(locale);
             >
               {t.nav.archives}
             </a>
-            <span class="mx-2">&nbsp;|&nbsp;</span>
+            <span class="mx-1.5">&nbsp;|&nbsp;</span>
           </>
         )
       }
       <span>{t.footer.copyright} &#169; {currentYear}</span>
       <span class="hidden sm:inline">&nbsp;|&nbsp;</span>
-      <span>{t.footer.allRightsReserved}</span>
+      <span class="max-sm:hidden">{t.footer.allRightsReserved}</span>
     </div>
   </div>
 </footer>
