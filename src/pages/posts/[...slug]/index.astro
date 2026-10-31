@@ -94,11 +94,29 @@ if (!ogImageUrl && config.features.dynamicOgImage) {
 const ogImage = ogImageUrl
   ? new URL(ogImageUrl, Astro.url.origin).href
   : undefined;
+
+// 飞书同步出来的文章基本没有 description，微信/Twitter 抓不到摘要，
+// 分享出去就只剩一个标题（甚至只显示链接）。这里退化成正文首段自动截一段，
+// 只用于 meta，不影响页面渲染。
+const plainText = (post.body ?? "")
+  .replace(/```[\s\S]*?```/g, " ")
+  .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+  .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+  .replace(/<[^>]+>/g, " ")
+  .replace(/^#{1,6}\s+/gm, "")
+  .replace(/[*_`>~|]/g, "")
+  .replace(/\s+/g, " ")
+  .trim();
+
+const metaDescription =
+  description?.trim() ||
+  (plainText.length > 110 ? `${plainText.slice(0, 110)}…` : plainText) ||
+  undefined;
 ---
 
 <PostLayout
   title={`${title} | ${config.site.title}`}
-  description={description}
+  description={metaDescription}
   ogImage={ogImage}
   canonicalURL={canonicalURL}
   pubDatetime={pubDatetime}

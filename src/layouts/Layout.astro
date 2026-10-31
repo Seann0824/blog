@@ -22,6 +22,11 @@ const {
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
 } = Astro.props;
 
+// description 传进来是空字符串时（content.config 会把缺失的字段归一化成 ""），
+// 默认值不会生效，会渲染出 <meta name="description" content> 这种无值属性，
+// 分享抓取方（微信/Twitter/Telegram）拿不到摘要，所以这里再兜一层。
+const metaDescription = description?.trim() || site.description;
+
 const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
 const rssHref = getRelativeLocaleUrl(
   Astro.currentLocale ?? config.site.lang,
@@ -47,7 +52,7 @@ const rssHref = getRelativeLocaleUrl(
     <!-- Primary meta -->
     <title>{title}</title>
     <meta name="title" content={title} />
-    <meta name="description" content={description} />
+    <meta name="description" content={metaDescription} />
     <meta name="author" content={site.author} />
     <link rel="sitemap" href={getAssetPath("sitemap-index.xml")} />
 
@@ -55,7 +60,7 @@ const rssHref = getRelativeLocaleUrl(
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.title} />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
 
@@ -63,7 +68,7 @@ const rssHref = getRelativeLocaleUrl(
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
+    <meta property="twitter:description" content={metaDescription} />
     <meta property="twitter:image" content={socialImageURL} />
 
     <!-- RSS autodiscovery -->
