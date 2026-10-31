@@ -63,6 +63,8 @@ const rssHref = getRelativeLocaleUrl(
     <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
+    <!-- 微信/部分老抓取器只认 image_src，指到 jpg 方图 -->
+    <link rel="image_src" href={new URL("/images/share-card.jpg", Astro.site ?? Astro.url).href} />
 
     <!-- Twitter / X -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -118,6 +120,19 @@ const rssHref = getRelativeLocaleUrl(
   <body
     class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-dvh flex-col overflow-hidden max-sm:overflow-visible sm:h-dvh"
   >
+    {/* 微信分享卡片读的是页面里的 <img>：不认 WebP、不认 loading="lazy"、
+        也会跳过 display:none 的图。正文首图是同步来的 WebP，微信拿不到，
+        分享出去就只有「小卡片」。这里放一张 jpg 方图当抓取目标，
+        视觉上移出视口但保持渲染（见 global.css 的 .share-thumb-probe）。 */}
+    <img
+      src="/images/share-card.jpg"
+      alt=""
+      width="512"
+      height="512"
+      aria-hidden="true"
+      decoding="sync"
+      class="share-thumb-probe"
+    />
     <slot />
     <script>
       import "@/scripts/theme";

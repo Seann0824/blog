@@ -21,6 +21,8 @@ const IMAGE_DIR = path.join(ROOT, "public", "images");
 const CONTENT_DIR = path.join(ROOT, "src", "content");
 const QUALITY = 80;
 const SOURCE_RE = /\.(png|jpe?g)$/i;
+// 分享卡片用的缩略图必须保持 jpg（微信抓取不认 webp），不能被本脚本转掉
+const PROTECTED = new Set(["share-card.jpg"]);
 
 const kb = n => `${Math.round(n / 1024)}K`;
 
@@ -49,7 +51,10 @@ async function mtime(file) {
 }
 
 // 1) 转 webp
-const sources = await listFiles(IMAGE_DIR, name => SOURCE_RE.test(name));
+const sources = await listFiles(
+  IMAGE_DIR,
+  name => SOURCE_RE.test(name) && !PROTECTED.has(name)
+);
 let converted = 0;
 let before = 0;
 let after = 0;

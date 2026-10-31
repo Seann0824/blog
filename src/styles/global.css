@@ -98,3 +98,14 @@
     min-height: 0 !important;
   }
 }
+
+/* 分享抓取用的缩略图：微信会跳过 display:none / visibility:hidden 的 img，
+   所以移出视口但仍参与渲染。 */
+.share-thumb-probe {
+  position: absolute;
+  top: 0;
+  left: -9999px;
+  width: 300px;
+  height: 300px;
+  pointer-events: none;
+}
