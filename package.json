@@ -8,9 +8,9 @@
     "build": "astro check && astro build && pagefind --site dist && cp -R dist/pagefind public/",
     "preview": "astro preview",
     "check": "astro check",
-    "sync": "elog sync -e .elog.env",
-    "sync:clean": "elog clean",
-    "sync:full": "elog sync -e .elog.env --full-cache",
+    "sync": "elog sync -c elog.config.cjs -e .elog.env",
+    "sync:clean": "elog clean -c elog.config.cjs",
+    "sync:full": "elog sync -c elog.config.cjs -e .elog.env --full-cache",
     "postinstall": "node scripts/patch-feishux.mjs"
   },
   "dependencies": {

@@ -37,7 +37,7 @@ jobs:
           ENVEOF
 
       - name: Pull posts from Feishu
-        run: npx elog sync -e .elog.env
+        run: npx elog sync -c elog.config.cjs -e .elog.env
 
       - name: Commit if content changed
         id: commit
