@@ -2,8 +2,9 @@ import { defineAstroPaperConfig } from "./src/types/config";
 
 export default defineAstroPaperConfig({
   site: {
-    // 线上由 Cloudflare Pages 的 SITE_URL 环境变量注入，本地回落到占位域名
-    url: process.env.SITE_URL || "https://blog.example.com",
+    // 线上由 caddy 直接托管在 sean.englife.space；SITE_URL 仅作临时覆盖用。
+    // 这个值进 canonical / og:url / RSS / sitemap 和分享二维码，错了别人点进来就是死链。
+    url: process.env.SITE_URL || "https://sean.englife.space",
     title: "Sean 的博客",
     description: "Sean 的个人博客：前端工程师，做 AI 应用与 Agent 方向的产品工程。",
     author: "Sean",
