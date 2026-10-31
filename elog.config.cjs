@@ -23,8 +23,9 @@ module.exports = {
     local: {
       // Astro content collection 直接读这个目录
       outputDir: './src/content/posts',
-      // 用文档标题当文件名；想要英文 URL 就在飞书侧把 urlname 改成英文短链
-      filename: 'title',
+      // 用飞书文档 token（urlname）当文件名：文档改名不会让 URL 漂移。
+      // 曾用 'title'，但标题一改就生成新文件，旧链接直接 404。
+      filename: 'urlname',
       format: 'markdown',
       // 按知识库目录结构生成子文件夹；关掉则全部平铺
       catalog: false,
