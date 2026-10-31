@@ -46,9 +46,37 @@ const profile = {
       >
         profile
       </p>
-      <h1 class="mt-4 text-4xl font-semibold tracking-[0.2em]">
-        {profile.name}
-      </h1>
+      <div class="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+        <h1 class="text-4xl font-semibold tracking-[0.2em]">{profile.name}</h1>
+        <div class="flex items-baseline gap-x-3 [&>a]:items-baseline">
+          <a
+            href={getRelativeLocaleUrl(locale, "about")}
+            class="group text-accent font-gothic inline-flex items-center gap-1 text-[0.65rem] tracking-[0.28em] uppercase"
+          >
+            {t.nav.resume}
+            <IconArrowRight
+              width={12}
+              height={12}
+              class="stroke-accent inline-block transition-transform group-hover:translate-x-1"
+            />
+          </a>
+          <span aria-hidden="true" class="text-border select-none">/</span>
+          <a
+            target="_blank"
+            href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rss.xml`}
+            class="text-muted-foreground hover:text-accent font-gothic inline-flex items-center gap-1.5 text-[0.65rem] tracking-[0.28em] uppercase transition-colors"
+            aria-label="RSS Feed"
+            title="RSS Feed"
+          >
+            <IconRss
+              width={12}
+              height={12}
+              class="stroke-accent scale-125 stroke-2 rtl:-rotate-90"
+            />
+            RSS
+          </a>
+        </div>
+      </div>
       <p
         class="text-muted-foreground font-gothic mt-3 text-xs tracking-[0.14em]"
       >
@@ -60,34 +88,6 @@ const profile = {
         {profile.signature}
       </p>
 
-      <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-        <a
-          href={getRelativeLocaleUrl(locale, "about")}
-          class="group text-accent font-gothic inline-flex items-center gap-1.5 text-[0.7rem] tracking-[0.3em] uppercase"
-        >
-          {t.nav.resume}
-          <IconArrowRight
-            width={16}
-            height={16}
-            class="stroke-accent inline-block transition-transform group-hover:translate-x-1"
-          />
-        </a>
-        <span aria-hidden="true" class="text-border select-none">/</span>
-        <a
-          target="_blank"
-          href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rss.xml`}
-          class="text-muted-foreground hover:text-accent font-gothic inline-flex items-center gap-2 text-[0.7rem] tracking-[0.3em] uppercase transition-colors"
-          aria-label="RSS Feed"
-          title="RSS Feed"
-        >
-          <IconRss
-            width={14}
-            height={14}
-            class="stroke-accent scale-125 stroke-2 rtl:-rotate-90"
-          />
-          RSS
-        </a>
-      </div>
 
       {
         socials.length > 0 && (
