@@ -6,7 +6,8 @@ export default defineAstroPaperConfig({
     // 这个值进 canonical / og:url / RSS / sitemap 和分享二维码，错了别人点进来就是死链。
     url: process.env.SITE_URL || "https://sean.englife.space",
     title: "Sean 的博客",
-    description: "Sean 的个人博客：前端工程师，做 AI 应用与 Agent 方向的产品工程。",
+    // 直接沿用 README 的自述句子（README.md:3），不再另编一版
+    description: "以飞书云文档为写作端、Astro 为渲染层的个人博客。",
     author: "Sean",
     ogImage: "default-og.jpg",
     lang: "zh-CN",

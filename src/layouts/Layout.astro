@@ -3,6 +3,9 @@ import { ClientRouter } from "astro:transitions";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import sharp from "sharp";
 import config from "@/config";
 import "@/styles/global.css";
 
@@ -30,6 +33,33 @@ const {
 const metaDescription = description?.trim() || site.description;
 
 const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
+
+// 预览抓取器（微信/Telegram/Facebook 等）会先看 og:image:width/height 决定这张图能不能用。
+// 缺这两项时部分抓取器直接放弃取图，整张卡片退化成「缩略图 + 域名」的降级样式，
+// 连标题和摘要都不渲染。图片按 pathname 在 public/ 下定位，构建期用 sharp 读真实像素。
+async function readSocialImageSize(
+  url: URL
+): Promise<{ width: number; height: number } | null> {
+  try {
+    const filePath = path.join(
+      process.cwd(),
+      "public",
+      decodeURIComponent(url.pathname)
+    );
+    const { width, height } = await sharp(await readFile(filePath)).metadata();
+    return width && height ? { width, height } : null;
+  } catch {
+    // 远程图片或文件不在 public 时，宁可少两个标签也不让构建失败
+    return null;
+  }
+}
+
+const socialImageSize = await readSocialImageSize(socialImageURL);
+
+// 抓取器（尤其微信）只认 jpg/png，WebP 会被当成「没有图」直接留白。
+const socialImageType = /\.png$/i.test(socialImageURL.pathname)
+  ? "image/png"
+  : "image/jpeg";
 const rssHref = getRelativeLocaleUrl(
   Astro.currentLocale ?? config.site.lang,
   "rss.xml"
@@ -65,8 +95,24 @@ const rssHref = getRelativeLocaleUrl(
     <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
-    <!-- 微信/部分老抓取器只认 image_src，指到 jpg 方图 -->
-    <link rel="image_src" href={new URL("/images/share-card.jpg", Astro.site ?? Astro.url).href} />
+    <meta property="og:image:type" content={socialImageType} />
+    <meta property="og:image:alt" content={title} />
+    {socialImageSize && (
+      <>
+        <meta property="og:image:width" content={String(socialImageSize.width)} />
+        <meta
+          property="og:image:height"
+          content={String(socialImageSize.height)}
+        />
+      </>
+    )}
+    <!-- 微信/部分老抓取器（QQ、老版 Android 微信）只认 image_src，
+         必须和 og:image 指同一张 jpg/png，否则卡片里只剩占位框 -->
+    <link rel="image_src" href={socialImageURL} />
+    <!-- 部分国内抓取器只读 itemprop，显式补一份 -->
+    <meta itemprop="name" content={title} />
+    <meta itemprop="description" content={metaDescription} />
+    <meta itemprop="image" content={socialImageURL} />
 
     <!-- Twitter / X -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -127,10 +173,8 @@ const rssHref = getRelativeLocaleUrl(
         分享出去就只有「小卡片」。这里放一张 jpg 方图当抓取目标，
         视觉上移出视口但保持渲染（见 global.css 的 .share-thumb-probe）。 */}
     <img
-      src="/images/share-card.jpg"
+      src={socialImageURL.href}
       alt=""
-      width="512"
-      height="512"
       aria-hidden="true"
       decoding="sync"
       class="share-thumb-probe"
