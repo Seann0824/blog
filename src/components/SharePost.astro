@@ -1,0 +1,113 @@
+---
+import QRCode from "qrcode";
+
+/**
+ * 分享入口。
+ *
+ * 微信不允许网页 JS 直接唤起「分享到朋友圈」（没有 URL scheme，只有公众号页面
+ * 通过 JS-SDK 才能自定义分享内容，而 JS-SDK 要认证公众号 + 后端签名）。
+ * 所以这里走两条真实可行的路：
+ *   1. 在微信内置浏览器里 → 提示点右上角「···」→ 分享到朋友圈
+ *   2. 在其他浏览器里 → 给二维码，用微信扫开，再走第 1 条
+ * 二维码在构建期生成，页面不加载任何第三方 SDK。
+ */
+const shareUrl = Astro.url.href;
+
+const qrSvg = await QRCode.toString(shareUrl, {
+  type: "svg",
+  margin: 0,
+  errorCorrectionLevel: "M",
+  width: 120,
+  color: { dark: "#1c1a17", light: "#ffffff" },
+});
+---
+
+<div class="mt-12" data-share>
+  <button
+    type="button"
+    data-share-toggle
+    aria-expanded="false"
+    class="inline-flex items-center gap-2 text-[0.7rem] tracking-[0.3em] text-muted-foreground uppercase transition-colors hover:text-accent focus-visible:text-accent"
+  >
+    <span aria-hidden="true">↗</span>
+    分享
+  </button>
+
+  <div data-share-panel hidden class="mt-5 flex items-start gap-6 max-sm:flex-col">
+    <div
+      data-share-qr
+      class="shrink-0 bg-white p-2.5 [&>svg]:block [&>svg]:size-[120px]"
+      set:html={qrSvg}
+    >
+    </div>
+
+    <div class="flex flex-col gap-3 text-sm">
+      <p data-share-lead class="text-foreground">微信扫码打开这篇文章</p>
+      <p class="text-xs leading-relaxed text-muted-foreground">
+        在微信里点右上角 <span class="text-foreground">···</span> → 分享到朋友圈
+      </p>
+      <button
+        type="button"
+        data-share-copy
+        data-url={shareUrl}
+        class="self-start text-[0.7rem] tracking-[0.25em] text-muted-foreground uppercase transition-colors hover:text-accent"
+      >
+        复制链接
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline data-astro-rerun>
+  (() => {
+    const root = document.querySelector("[data-share]");
+    if (!root || root.dataset.ready === "1") return;
+    root.dataset.ready = "1";
+
+    const toggle = root.querySelector("[data-share-toggle]");
+    const panel = root.querySelector("[data-share-panel]");
+    const qr = root.querySelector("[data-share-qr]");
+    const lead = root.querySelector("[data-share-lead]");
+    const copy = root.querySelector("[data-share-copy]");
+    if (!toggle || !panel) return;
+
+    // 已经在微信里了，扫码没有意义，直接给菜单提示
+    if (/MicroMessenger/i.test(navigator.userAgent) && qr && lead) {
+      qr.remove();
+      lead.textContent = "点右上角 ··· 分享到朋友圈";
+    }
+
+    toggle.addEventListener("click", () => {
+      const open = panel.hasAttribute("hidden");
+      panel.toggleAttribute("hidden", !open);
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+
+    copy?.addEventListener("click", async () => {
+      const url = copy.dataset.url || location.href;
+      const done = () => {
+        copy.textContent = "已复制";
+        setTimeout(() => (copy.textContent = "复制链接"), 1600);
+      };
+      try {
+        await navigator.clipboard.writeText(url);
+        done();
+      } catch {
+        // 非安全上下文（http / 老浏览器）下 clipboard 不可用，退回 execCommand
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          done();
+        } finally {
+          ta.remove();
+        }
+      }
+    });
+  })();
+</script>

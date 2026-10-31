@@ -10,7 +10,7 @@ import { getSortedPosts } from "@/utils/getSortedPosts";
 import { slugifyStr } from "@/utils/slugify";
 import { toTransitionName } from "@/utils/toTransitionName";
 import EditPost from "./_components/EditPost.astro";
-import ShareLinks from "./_components/ShareLinks.astro";
+import SharePost from "@/components/SharePost.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
@@ -154,7 +154,7 @@ const ogImage = ogImageUrl
       )
     }
 
-    <ShareLinks />
+    <SharePost />
 
     <div class="mt-10 flex items-center justify-between gap-4">
       <BackToTopButton />
