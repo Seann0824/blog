@@ -61,7 +61,7 @@
     }
 
     img {
-      @apply border-border mx-auto border;
+      @apply border-border mx-auto h-auto max-w-full border;
     }
 
     img[role="button"] {
