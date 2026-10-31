@@ -39,6 +39,9 @@ jobs:
       - name: Pull posts from Feishu
         run: npx elog sync -c elog.config.cjs -e .elog.env
 
+      - name: Convert images to WebP
+        run: node scripts/images-to-webp.mjs
+
       - name: Commit if content changed
         id: commit
         run: |

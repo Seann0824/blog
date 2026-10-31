@@ -8,10 +8,11 @@
     "build": "astro check && astro build && pagefind --site dist && cp -R dist/pagefind public/",
     "preview": "astro preview",
     "check": "astro check",
-    "sync": "elog sync -c elog.config.cjs -e .elog.env",
+    "sync": "elog sync -c elog.config.cjs -e .elog.env && node scripts/images-to-webp.mjs",
     "sync:clean": "elog clean -c elog.config.cjs",
-    "sync:full": "elog sync -c elog.config.cjs -e .elog.env --full-cache",
-    "postinstall": "node scripts/patch-feishux.mjs"
+    "sync:full": "elog sync -c elog.config.cjs -e .elog.env --full-cache && node scripts/images-to-webp.mjs",
+    "postinstall": "node scripts/patch-feishux.mjs",
+    "images:webp": "node scripts/images-to-webp.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.4",
