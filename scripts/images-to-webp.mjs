@@ -23,6 +23,9 @@ const QUALITY = 80;
 const SOURCE_RE = /\.(png|jpe?g)$/i;
 // 分享卡片用的缩略图必须保持 jpg（微信抓取不认 webp），不能被本脚本转掉
 const PROTECTED = new Set(["share-card.jpg"]);
+// 每篇文章的首图额外留一份 jpg（<name>.share.jpg）：微信只认 jpg/png，
+// 且只抓页面里第一张能加载的图。这份副本不能被第 1 步当成原图转掉。
+const SHARE_SUFFIX = ".share.jpg";
 
 const kb = n => `${Math.round(n / 1024)}K`;
 
@@ -53,7 +56,7 @@ async function mtime(file) {
 // 1) 转 webp
 const sources = await listFiles(
   IMAGE_DIR,
-  name => SOURCE_RE.test(name) && !PROTECTED.has(name)
+  name => SOURCE_RE.test(name) && !PROTECTED.has(name) && !name.endsWith(SHARE_SUFFIX)
 );
 let converted = 0;
 let before = 0;
@@ -101,7 +104,28 @@ for (const file of posts) {
   }
 }
 
-if (converted === 0 && rewritten === 0) {
+// 3) 给每篇文章的首图生成 jpg 副本（微信抓卡片只认 jpg/png）
+let shareMade = 0;
+for (const file of posts) {
+  const body = await readFile(file, "utf8");
+  const first = body.match(/\/images\/([^"'\s)\]]+?)\.webp/i);
+  if (!first) continue;
+  const source = path.join(IMAGE_DIR, `${first[1]}.webp`);
+  const share = path.join(IMAGE_DIR, `${first[1]}${SHARE_SUFFIX}`);
+  if ((await mtime(share)) >= (await mtime(source))) continue;
+  try {
+    await sharp(source)
+      .resize({ width: 1000, withoutEnlargement: true })
+      .jpeg({ quality: 80 })
+      .toFile(share);
+    shareMade += 1;
+    console.log(`  首图 jpg ${path.basename(share)}  ${kb((await stat(share)).size)}`);
+  } catch (error) {
+    console.warn(`  首图 jpg 生成失败（${path.basename(source)}）：${error.message}`);
+  }
+}
+
+if (converted === 0 && rewritten === 0 && shareMade === 0) {
   console.log("图片已是 webp，无需处理");
 } else if (converted > 0) {
   console.log(

@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -10,6 +10,15 @@ import sharp from "sharp";
  * 有了宽高，浏览器就能先把位置占住。
  */
 const cache = new Map();
+
+async function exists(file) {
+  try {
+    await stat(file);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 async function dimensions(file) {
   if (cache.has(file)) return cache.get(file);
@@ -32,6 +41,40 @@ export function rehypeImageDimensions() {
       for (const child of node.children ?? []) walk(child);
     };
     walk(tree);
+
+    /*
+     * 文章首图换成 jpg 并立即加载。
+     *
+     * 起因：微信分享出去的链接只有「小卡片」没有缩略图。微信拼卡片时读的是页面里
+     * 第一张能加载的图，而它不认 WebP、也不会为 loading="lazy" 的图去下载。飞书同步
+     * 下来的插图全被压成了 webp + 懒加载，微信什么都抓不到；而别家开源博客的首图是
+     * jpg 且直接可见，所以它们能出卡片。
+     *
+     * 所以每篇文章的首图在同步阶段会多留一份 <name>.share.jpg（见
+     * scripts/images-to-webp.mjs），这里把它换上去、去掉懒加载。其余插图保持 webp。
+     */
+    const first = images[0];
+    if (first) {
+      const src = first.properties?.src;
+      if (
+        typeof src === "string" &&
+        src.startsWith("/") &&
+        /\.webp$/i.test(src)
+      ) {
+        const share = src.replace(/\.webp$/i, ".share.jpg");
+        const shareFile = path.join(process.cwd(), "public", share);
+        if (await exists(shareFile)) {
+          const size = await dimensions(shareFile);
+          first.properties.src = share;
+          if (size) {
+            first.properties.width = size.width;
+            first.properties.height = size.height;
+          }
+          first.properties.loading = "eager";
+          first.properties.fetchpriority = "high";
+        }
+      }
+    }
 
     await Promise.all(
       images.map(async node => {
