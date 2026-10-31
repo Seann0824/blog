@@ -1,4 +1,6 @@
 ---
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import PostLayout from "@/layouts/PostLayout.astro";
 import Header from "@/components/Header.astro";
@@ -77,11 +79,45 @@ const { Content } = await render(post);
 
 // 本站的 ogImage 只在 frontmatter 里写成字符串（飞书产物不会带图片资源），
 // 所以不再走 ImageMetadata 分支
+/**
+ * 微信抓卡片缩略图只认 jpg/png，WebP 一律当「没有图」。
+ *
+ * 飞书同步下来的正文插图全是 WebP（见 scripts/images-to-webp.mjs），同步阶段会给
+ * 每篇首图额外留一份 <name>.share.jpg。这里优先拿它当文章的分享图，让微信卡片
+ * 显示的是这篇文章自己的图，而不是站点默认图；实在没有才退回站点默认图。
+ */
+function firstShareImage(body: string | undefined): string | undefined {
+  // 直接抓第一处 /images/xxx.(webp|png|jpg) 引用，不依赖 markdown 语法细节
+  const src = (body ?? "").match(
+    /\/?images\/[^\s)"'<>]+\.(?:webp|png|jpe?g)/i
+  )?.[0];
+  if (!src) return undefined;
+
+  const relative = src.replace(/^\/+/, "");
+  const stem = relative.replace(/\.(?:webp|png|jpe?g)$/i, "");
+  const candidates = [
+    `${stem}.share.jpg`,
+    relative,
+    `${stem}.jpg`,
+    `${stem}.png`,
+  ];
+
+  for (const candidate of candidates) {
+    if (!/\.(?:jpe?g|png)$/i.test(candidate)) continue;
+    if (existsSync(path.join(process.cwd(), "public", candidate))) {
+      return `/${candidate}`;
+    }
+  }
+  return undefined;
+}
+
 let ogImageUrl: string | undefined;
 
 if (typeof initOgImage === "string") {
   ogImageUrl = initOgImage;
 }
+
+ogImageUrl ??= firstShareImage(post.body);
 
 if (!ogImageUrl && config.features.dynamicOgImage) {
   const postUrl = getPostUrl(post.id, post.filePath, locale).replace(
