@@ -1,0 +1,98 @@
+---
+import { giscus } from "@/config/giscus";
+
+/**
+ * GitHub 评论（giscus）。
+ *
+ * 为什么选 giscus：每条评论就是本仓库 Discussions 里的一个帖子，账号、权限、通知
+ * 全部复用 GitHub —— 不用注册新账号、不用自建后端数据库，也不用把读者数据交给
+ * 第三方评论 SaaS。代价是评论必须用 GitHub 账号登录。
+ *
+ * 页面上不会内嵌任何常驻 iframe：脚本随组件按需挂载，且 data-loading="lazy"，
+ * 滚到评论区才真正去拉 giscus。
+ */
+const enabled = Boolean(giscus.repoId && giscus.categoryId);
+---
+
+{
+  enabled && (
+    <section class="mt-16 border-t border-border pt-8" aria-labelledby="comments-title">
+      <h2 id="comments-title" class="text-lg font-semibold tracking-[0.02em]">
+        评论
+      </h2>
+      <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+        用 GitHub 账号登录即可留言，评论存放在这个仓库的 Discussions 里。
+      </p>
+      <div
+        class="giscus mt-6"
+        data-giscus
+        data-repo={giscus.repo}
+        data-repo-id={giscus.repoId}
+        data-category={giscus.category}
+        data-category-id={giscus.categoryId}
+      />
+    </section>
+  )
+}
+
+<script>
+  const GISCUS_ORIGIN = "https://giscus.app";
+
+  function currentTheme(): string {
+    return document.documentElement.getAttribute("data-theme") === "dark"
+      ? "dark"
+      : "light";
+  }
+
+  function mountComments(): void {
+    const host = document.querySelector<HTMLElement>("[data-giscus]");
+    if (!host || host.dataset.mounted === "true") return;
+    host.dataset.mounted = "true";
+
+    // 配置从 DOM 上读，而不是在构建期拼成字符串：这样站点开不开评论只由
+    // src/config/giscus.ts 决定，组件本身不用跟着改。
+    const config: Record<string, string> = {
+      "data-repo": host.dataset.repo ?? "",
+      "data-repo-id": host.dataset.repoId ?? "",
+      "data-category": host.dataset.category ?? "",
+      "data-category-id": host.dataset.categoryId ?? "",
+      "data-mapping": "pathname",
+      "data-strict": "0",
+      "data-reactions-enabled": "1",
+      "data-emit-metadata": "0",
+      "data-input-position": "top",
+      "data-theme": currentTheme(),
+      "data-lang": "zh-CN",
+      "data-loading": "lazy",
+    };
+
+    const script = document.createElement("script");
+    script.src = `${GISCUS_ORIGIN}/client.js`;
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    for (const [key, value] of Object.entries(config)) {
+      script.setAttribute(key, value);
+    }
+    host.appendChild(script);
+  }
+
+  // 主题切换后同步 iframe 内部主题，否则深色页面里会嵌一块白板。
+  // 主题状态由 src/scripts/theme.ts 写在 <html data-theme>，这里只观察它。
+  function syncCommentsTheme(): void {
+    const frame = document.querySelector<HTMLIFrameElement>(
+      "iframe.giscus-frame"
+    );
+    frame?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme: currentTheme() } } },
+      GISCUS_ORIGIN
+    );
+  }
+
+  new MutationObserver(syncCommentsTheme).observe(
+    document.documentElement,
+    { attributes: true, attributeFilter: ["data-theme"] }
+  );
+
+  // ClientRouter 会换掉 <body>，页面每次真正就绪都重新挂一次
+  document.addEventListener("astro:page-load", mountComments);
+</script>

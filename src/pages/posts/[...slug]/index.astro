@@ -13,6 +13,7 @@ import { slugifyStr } from "@/utils/slugify";
 import { toTransitionName } from "@/utils/toTransitionName";
 import EditPost from "./_components/EditPost.astro";
 import SharePost from "@/components/SharePost.astro";
+import Comments from "@/components/Comments.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
@@ -209,6 +210,8 @@ const metaDescription =
     }
 
     <SharePost />
+
+    <Comments />
 
     <div class="mt-10 flex items-center justify-between gap-4">
       <BackToTopButton />
