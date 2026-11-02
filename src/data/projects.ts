@@ -1,77 +1,54 @@
 /**
  * /projects 页面数据。
  *
- * 事实全部来自 Resume.astro 里的履历与本地工具本身，没写没验证过的数字。
- * 分组只按「受众关系」分两类：自己做的东西，和工作里交付的东西。
+ * 铁律：只放能真跳转的条目。没有公开入口的项目（公司内部系统、本地私有工具）
+ * 一个都不列 —— 卡片点不动比没有这张卡片更糟。每个 href 都实际请求过：
+ * 仓库返回 200，npm 包能解析出版本号。
  */
-export type ProjectItem = {
+export type Project = {
   name: string;
   desc: string;
-  /** 有公开入口才给 href；没有就渲染成纯文本条目，点不动 */
-  href?: string;
-  /** 一行补充信息：状态、体量、技术栈，都写可核实的 */
+  href: string;
+  /** 一行补充信息：语言、星标、体量，都可核实 */
   meta?: string[];
 };
 
-export type ProjectGroup = {
-  label: string;
-  note?: string;
-  items: ProjectItem[];
-};
-
-export const projectGroups: ProjectGroup[] = [
+/** 大致按「分量 + 新鲜度」排，不分组：能点开的只有这几个，硬分组反而显空 */
+export const projects: Project[] = [
   {
-    label: "独立产品",
-    note: "自己选题、自己写、自己部署",
-    items: [
-      {
-        name: "AgentOS · 个人 agent 系统",
-        desc: "部署在云端机器上的 agent 运行时，目标是每个人都能拥有、并自己部署一套属于自己的 agent。",
-        meta: ["进行中", "云端服务"],
-      },
-      {
-        name: "机票神操作 CLI",
-        desc: "微信扫码登录小程序，查航线、随心飞与航班价格日历，结果导出 JSON / CSV。",
-        meta: ["本地工具", "Node.js"],
-      },
-      {
-        name: "海南航空 666PLUS 查询",
-        desc: "对接海航官方接口查 666PLUS 会员价，按航线与日期比价，可导入自己浏览器的 HAR 会话。",
-        meta: ["本地工具"],
-      },
-      {
-        name: "这个博客",
-        desc: "飞书云文档当写作端、Astro 当渲染层，同步即发布；正文图片在构建期统一转 WebP。",
-        href: "https://sean.englife.space",
-        meta: ["Astro", "飞书"],
-      },
-    ],
+    name: "Shirley",
+    desc: "用 Rust 写的 coding agent：可复用的 Agent SDK（协议适配、ReAct 运行时、沙箱、工具宏），上面再搭 TUI 和 Tauri 桌面端。",
+    href: "https://github.com/Seann0824/Shirley",
+    meta: ["Rust", "Agent SDK"],
   },
   {
-    label: "工作中交付",
-    note: "在公司做的东西，多数不对外，这里只写结论",
-    items: [
-      {
-        name: "MasterGo Agent / MCP",
-        desc: "自然语言生成、编辑设计稿，并让 AI 读取设计数据生成代码；核心是 Agent Loop、工具调度与流式消息解析。",
-        href: "https://www.npmjs.com/package/@mastergo/magic-mcp",
-        meta: ["magic-mcp 18 万+ 下载"],
-      },
-      {
-        name: "MasterGo 本地字体服务",
-        desc: "用 Rust + Tokio + TTF-parser 重写插件底层，解决解析低效与内存泄漏。",
-        meta: ["安装包 65MB → 3MB", "内存 700MB → 15MB"],
-      },
-      {
-        name: "TikTok 素材库与创编流程",
-        desc: "统一 Video / Image / Post 三类素材的筛选、日期、自定义列、下载与删除，并设计前端灰度、回滚与新旧链路隔离。",
-        meta: ["2026"],
-      },
-      {
-        name: "CreativeRelations · 素材绑品",
-        desc: "基于 Module Federation 封装远程组件供多项目复用，统一业务白名单 Hook 管理多条业务线准入。",
-        meta: ["覆盖 4,000+ 广告主"],
-      },
-    ],
+    name: "deepseek-harness-for-codex",
+    desc: "Codex 插件兼 MCP server：在本机跑 DeepSeek Harness，通过可见的网页会话派任务，再让 Codex 独立复核结果。",
+    href: "https://github.com/Seann0824/deepseek-harness-for-codex",
+    meta: ["TypeScript", "★ 12"],
+  },
+  {
+    name: "TubeGate",
+    desc: "用自然语言规则过滤 YouTube 推荐：自定义主题、保留条件和一键恢复，不想看的东西不再反复出现。",
+    href: "https://github.com/Seann0824/TubeGate",
+    meta: ["TypeScript"],
+  },
+  {
+    name: "movies-search-mcp",
+    desc: "影视搜索的 MCP Server，给支持 MCP 的客户端直接挂上检索能力。",
+    href: "https://github.com/Seann0824/movies-search-mcp",
+    meta: ["TypeScript", "★ 5"],
+  },
+  {
+    name: "MasterGo Agent / MCP",
+    desc: "自然语言生成、编辑设计稿，并让 AI 读取设计数据生成代码；公开部分是这个 npm 包，接的是 MasterGo 的云端服务。",
+    href: "https://www.npmjs.com/package/@mastergo/magic-mcp",
+    meta: ["npm 18 万+ 下载", "v0.2.12"],
+  },
+  {
+    name: "这个博客",
+    desc: "飞书云文档当写作端、Astro 当渲染层，同步即发布；正文图片在构建期统一转 WebP。",
+    href: "https://sean.englife.space",
+    meta: ["Astro", "正在运行"],
   },
 ];
