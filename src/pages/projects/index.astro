@@ -1,0 +1,121 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+import { projectGroups } from "@/data/projects";
+
+/**
+ * 项目页：布局参考 antfu.me/projects（分组标题 + 三列网格，每项「名称 + 一句话」），
+ * 视觉全部走本站自己的 token，不搬别人的样式。
+ */
+const title = "项目";
+const description = "Sean 做过的产品：个人 agent 系统、机票查询工具，以及 MasterGo、TikTok Ads 上的工作交付。";
+const total = projectGroups.reduce((n, g) => n + g.items.length, 0);
+---
+
+<Layout
+  title={`${title} | ${config.site.title}`}
+  description={description}
+  canonicalURL={new URL(Astro.url.pathname, Astro.site).href}
+>
+  <Header />
+
+  <Breadcrumb />
+
+  <main id="main-content" class="app-scroll">
+    <div class="app-layout pb-10">
+      <section class="mb-10" aria-labelledby="projects-title">
+        <h1
+          id="projects-title"
+          class="text-2xl font-semibold tracking-[0.03em] sm:text-3xl"
+        >
+          {title}
+        </h1>
+        <p class="mt-3 max-w-[52ch] leading-relaxed text-muted-foreground">
+          做过的产品，分两类：自己选题独立做的，和工作里交付的。共 {total} 个。
+        </p>
+      </section>
+
+      {
+        projectGroups.map(group => (
+          <section class="mb-12" aria-labelledby={`group-${group.label}`}>
+            <div class="mb-5 flex items-baseline gap-3 border-b border-border border-dashed pb-2">
+              <h2
+                id={`group-${group.label}`}
+                class="font-gothic text-xs tracking-[0.3em] uppercase"
+              >
+                {group.label}
+              </h2>
+              {group.note && (
+                <span class="text-[0.7rem] tracking-[0.08em] text-muted-foreground">
+                  {group.note}
+                </span>
+              )}
+            </div>
+
+            <ul class="grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+              {group.items.map(item => {
+                const body = (
+                  <>
+                    <h3 class="flex items-baseline gap-1.5 text-base font-medium tracking-[0.02em] transition-colors group-hover:text-accent">
+                      {item.name}
+                      {item.href && (
+                        <span aria-hidden="true" class="text-xs text-muted-foreground">
+                          ↗
+                        </span>
+                      )}
+                    </h3>
+                    <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                      {item.desc}
+                    </p>
+                    {item.meta && (
+                      <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[0.7rem] tracking-[0.08em] text-muted-foreground/70">
+                        {item.meta.map(tag => (
+                          <span>{tag}</span>
+                        ))}
+                      </p>
+                    )}
+                  </>
+                );
+
+                return (
+                  <li class="group">
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        class="focus-outline block"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${item.name}（在新窗口打开）`}
+                      >
+                        {body}
+                      </a>
+                    ) : (
+                      body
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))
+      }
+
+      <p class="font-gothic text-xs tracking-[0.12em] text-muted-foreground">
+        代码多在
+        <a
+          href="https://github.com/Seann0824"
+          class="ms-1 text-foreground transition-colors hover:text-accent"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          github.com/Seann0824
+        </a>
+      </p>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
